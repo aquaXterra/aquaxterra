@@ -1,0 +1,83 @@
+---
+title: "Latitudinal Diversity Gradients in Freshwater"
+author: "Quentin D. Read"
+date: "October 20, 2016"
+output: pdf_document
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(XLConnect)
+ldg <- readWorksheetFromFile('C:/Users/Q/Google Drive/aquaxterra_watercube_all/literature/general_biodiversity/Latitudinal_diversity_freshwater/freshwater_ldg_data.xlsx', sheet = 'Primary research')
+
+ldg <- subset(ldg, Gradient_type == 'latitude') # Ignore elevation studies for now
+library(dplyr)
+library(extrafont)
+library(ggplot2)
+
+myggtable <- function (data, var1, var2, margin = NULL) 
+{
+  library(ggplot2)
+  library(magrittr)
+  data = data[c(var1, var2)]
+  data[] = lapply(data, as.factor)
+  t_table = table(data[[var1]], data[[var2]]) %>% prop.table(margin = margin)
+  rawtable = table(data[[var1]], data[[var2]]) %>% as.data.frame()
+  d_table = t_table %>% as.data.frame()
+  ggplot(d_table, aes(Var2, Var1)) + geom_tile(aes(fill = Freq), color = 'black') + 
+    geom_text(aes(label = round(Freq, 2)), data = rawtable) + scale_fill_continuous(name = "Proportion") + 
+    ylab(substitute(var1)) + xlab(substitute(var2))
+}
+
+ldg <- ldg %>% 
+  filter(BroadTaxon %in% c('vertebrate','invertebrate','plant','microbe')) %>% 
+  mutate(LDG = factor(LDG, levels = c('standard','opposite','unimodal','trough','none')),
+         BroadTaxon = factor(BroadTaxon, levels = c('microbe','invertebrate','vertebrate','plant')))
+
+theme_table <- theme_bw() + theme(panel.grid = element_blank(),
+                                  text = element_text(family='Helvetica'),
+                                  axis.ticks = element_blank(), 
+                                  legend.position = 'none',
+                                  axis.text.y = element_text(angle = 90, hjust=0.5),
+                                  axis.title = element_text(size = 16))
+
+taxtable <- myggtable(ldg, 'BroadTaxon', 'LDG', margin = 1) + 
+  scale_fill_distiller(palette = 'RdBu', name = 'Proportion') + 
+  theme_table +
+  labs(x = 'Latitudinal Diversity Gradient', y = 'Taxon')
+bodytable <- myggtable(ldg, 'BroadWaterbody', 'LDG', margin = 1) + 
+  scale_fill_distiller(palette = 'RdBu', name = 'Proportion') +
+  theme_table +
+  labs(x = 'Latitudinal Diversity Gradient', y = 'Waterbody Class')
+```
+
+# Introduction/Methods
+
+I did a literature search using Web of Science, trying to find as many studies of latitudinal diversity gradients (LDG) in freshwater as possible. The search term was *latitud\* diversity freshwater*. That search found 228 articles of which I saved 50 after reading the abstracts. Laura added several articles as well. I compiled the results in a table, for those studies that had valid tests of the LDG, and classified them by taxon, type of waterbody, type of gradient, response variable, and continent. I also found a few elevational gradient studies, which I've ignored for the moment. Almost all the studies looked at richness, but there were 2 or 3 studies that looked at some other diversity metric (which incorporated richness), 1 study that looked at functional diversity, and 2 or 3 studies that looked at intraspecific genetic diversity. I have lumped those together for the moment. A study could have multiple rows in the table if it reported gradients for different taxa. I just classified the LDG results by whether it declined with latitude, increased, had a peaked/unimodal pattern, had a trough/U-shaped pattern, or no pattern, rather than reporting the slope.
+
+# Results
+
+Overall, the majority (58%) of the studies found a "standard" LDG, which I define as richness declining with latitude as you go away from the equator. This is probably pretty close to what meta-analyses that encompass terrestrial and aquatic systems have found, but might be a little less than expected.
+
+**Table by number of gradients**  
+```{r, echo=FALSE}
+table(ldg$LDG)
+```
+
+**Table by proportion**  
+```{r, echo=FALSE}
+round(table(ldg$LDG)/sum(table(ldg$LDG)),3)
+```
+
+\newpage
+In addition, I classified the results by taxon and by type of waterbody. The first figure below shows that the breakdown is pretty consistent across taxa, though invertebrates seem disproportionately likely to show a non-standard pattern. The second figure shows that streams (including all running waterbodies) may be more likely to show a non-standard pattern than lakes (including ponds, etc.) though there are few studies done only on streams. I had to lump a lot of studies together as "freshwater" because it either included both streams and lakes or it was not adequately clear if it focused on one or the other.
+
+**Contingency table by taxon**  
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5, fig.width=4.5}
+taxtable
+```
+
+**Contingency table by waterbody class**  
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5, fig.width=4.5}
+bodytable
+```
+
