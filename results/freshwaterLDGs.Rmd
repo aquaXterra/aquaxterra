@@ -1,7 +1,7 @@
 ---
 title: "Latitudinal Diversity Gradients in Freshwater"
 author: "Quentin D. Read"
-date: "October 20, 2016"
+date: "October 25, 2016"
 output: pdf_document
 ---
 
@@ -31,7 +31,9 @@ myggtable <- function (data, var1, var2, margin = NULL)
 ldg <- ldg %>% 
   filter(BroadTaxon %in% c('vertebrate','invertebrate','plant','microbe')) %>% 
   mutate(LDG = factor(LDG, levels = c('standard','opposite','unimodal','trough','none')),
-         BroadTaxon = factor(BroadTaxon, levels = c('microbe','invertebrate','vertebrate','plant')))
+         BroadTaxon = factor(BroadTaxon, levels = c('microbe','invertebrate','vertebrate','plant')),
+         Scale = factor(Scale, levels = c('regional', 'continental', 'global')),
+         Biome = factor(Biome, levels = c('temperate','tropical','boreal','many')))
 
 theme_table <- theme_bw() + theme(panel.grid = element_blank(),
                                   text = element_text(family='Helvetica'),
@@ -40,19 +42,34 @@ theme_table <- theme_bw() + theme(panel.grid = element_blank(),
                                   axis.text.y = element_text(angle = 90, hjust=0.5),
                                   axis.title = element_text(size = 16))
 
+oscale <- scale_fill_distiller(palette = 'Oranges', name = 'Proportion', direction = 1)
+
 taxtable <- myggtable(ldg, 'BroadTaxon', 'LDG', margin = 1) + 
-  scale_fill_distiller(palette = 'RdBu', name = 'Proportion') + 
+  oscale + 
   theme_table +
   labs(x = 'Latitudinal Diversity Gradient', y = 'Taxon')
 bodytable <- myggtable(ldg, 'BroadWaterbody', 'LDG', margin = 1) + 
-  scale_fill_distiller(palette = 'RdBu', name = 'Proportion') +
+  oscale +
   theme_table +
   labs(x = 'Latitudinal Diversity Gradient', y = 'Waterbody Class')
+scaletable <- myggtable(ldg, 'Scale', 'LDG', margin = 1) + 
+  oscale +
+  theme_table +
+  labs(x = 'Latitudinal Diversity Gradient', y = 'Spatial Extent')
+biometable <- myggtable(ldg, 'Biome', 'LDG', margin = 1) + 
+  oscale +
+  theme_table +
+  labs(x = 'Latitudinal Diversity Gradient', y = 'Biome') 
 ```
+
+# History
+
+* __20 Oct 2016__ created document
+* __25 Oct 2016__ added spatial scale, biome, and curve plots
 
 # Introduction/Methods
 
-I did a literature search using Web of Science, trying to find as many studies of latitudinal diversity gradients (LDG) in freshwater as possible. The search term was *latitud\* diversity freshwater*. That search found 228 articles of which I saved 50 after reading the abstracts. Laura added several articles as well. I compiled the results in a table, for those studies that had valid tests of the LDG, and classified them by taxon, type of waterbody, type of gradient, response variable, and continent. I also found a few elevational gradient studies, which I've ignored for the moment. Almost all the studies looked at richness, but there were 2 or 3 studies that looked at some other diversity metric (which incorporated richness), 1 study that looked at functional diversity, and 2 or 3 studies that looked at intraspecific genetic diversity. I have lumped those together for the moment. A study could have multiple rows in the table if it reported gradients for different taxa. I just classified the LDG results by whether it declined with latitude, increased, had a peaked/unimodal pattern, had a trough/U-shaped pattern, or no pattern, rather than reporting the slope.
+I did a literature search using Web of Science, trying to find as many studies of latitudinal diversity gradients (LDG) in freshwater as possible. The search term was *latitud\* diversity freshwater*. That search found 228 articles of which I saved 50 after reading the abstracts. Laura added several articles as well. I compiled the results in a table, for those studies that had valid tests of the LDG, and classified them by taxon, type of waterbody, type of gradient, response variable, and continent. I also roughly classified the study by spatial scale/extent: regional, continental, or global. Finally, I tried to classify them by biome but it was difficult because so many studies spanned biomes; the classification was just into tropical, temperate, boreal, or many. I also found a few elevational gradient studies, which I've ignored for the moment. Almost all the studies looked at richness, but there were 2 or 3 studies that looked at some other diversity metric (which incorporated richness), 1 study that looked at functional diversity, and 2 or 3 studies that looked at intraspecific genetic diversity. I have lumped those together for the moment. A study could have multiple rows in the table if it reported gradients for different taxa. I just classified the LDG results by whether it declined with latitude, increased, had a peaked/unimodal pattern, had a trough/U-shaped pattern, or no pattern, rather than reporting the slope.
 
 # Results
 
@@ -69,15 +86,74 @@ round(table(ldg$LDG)/sum(table(ldg$LDG)),3)
 ```
 
 \newpage
-In addition, I classified the results by taxon and by type of waterbody. The first figure below shows that the breakdown is pretty consistent across taxa, though invertebrates seem disproportionately likely to show a non-standard pattern. The second figure shows that streams (including all running waterbodies) may be more likely to show a non-standard pattern than lakes (including ponds, etc.) though there are few studies done only on streams. I had to lump a lot of studies together as "freshwater" because it either included both streams and lakes or it was not adequately clear if it focused on one or the other.
+
+In addition, I classified the results by taxon, by type of waterbody, by spatial extent, and by biome. The first figure below shows that the breakdown is pretty consistent across taxa, though invertebrates seem disproportionately likely to show a non-standard pattern. The second figure shows that streams (including all running waterbodies) may be more likely to show a non-standard pattern than lakes (including ponds, etc.) though there are few studies done only on streams. I had to lump a lot of studies together as "freshwater" because it either included both streams and lakes or it was not adequately clear if it focused on one or the other. The spatial extent table might be interesting, as it shows that a disproportionate number of studies at the global scale fail to detect a pattern. That is maybe the opposite of what I would have thought, but perhaps too many confounding variables are thrown together at that scale. Finally, the biome table does not seem to have huge differences among biomes.
 
 **Contingency table by taxon**  
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5, fig.width=4.5}
 taxtable
 ```
 
+\newpage
+
 **Contingency table by waterbody class**  
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5, fig.width=4.5}
 bodytable
 ```
 
+**Contingency table by spatial extent**  
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5, fig.width=4.5}
+scaletable
+```
+
+\newpage
+
+**Contingency table by biome**  
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5, fig.width=4.5}
+biometable
+```
+
+\newpage
+
+Here is another fun way of visualizing the trends. I drew a little line for each type of gradient (obviously the slopes are completely made up). The thickness of the line corresponds to the proportion of studies with that type of latitudinal diversity gradient. I represented zeroes with really thin dotted lines. The below figure, for example, might be nice for visualizing that the non-standard gradients become more common at the global extent.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+curveplot <- function(title, counts, scalefactor=0.75, lt1=1, lt2=3) {
+  cs <- RColorBrewer::brewer.pal(n=5, name='Set1')
+  
+  theme_curve <- theme_bw() + theme(panel.grid = element_blank(),
+                                    text = element_text(family='Helvetica'),
+                                    axis.ticks = element_blank(),
+                                    axis.text = element_blank(),
+                                    axis.title = element_blank(),
+                                    legend.position = 'none')
+  
+  th <- counts * scalefactor
+  lt <- rep(1,length(counts))
+  lt[th==0] <- 3
+  
+  ggplot(data.frame(x=c(0,1)), aes(x)) + 
+    theme_curve +
+    ggtitle(title) +
+    stat_function(geom='line', color=cs[1], size=th[1], linetype=lt[1], fun = function(x) -x+1) +
+    stat_function(geom='line', color=cs[2], size=th[2], linetype=lt[2], fun = function(x) x) +
+    stat_function(geom='line', color=cs[3], size=th[3], linetype=lt[3], fun = function(x) 1 - (5*(x-0.5)^2)) +
+    stat_function(geom='line', color=cs[4], size=th[4], linetype=lt[4], fun = function(x) 5*(x-0.5)^2 + 0.1) +
+    stat_function(geom='line', color=cs[5], size=th[5], linetype=lt[5], fun = function(x) 0.5)
+  
+}
+
+scalecounts <- ldg %>% group_by(Scale) %>% do(as.data.frame(table(.$LDG)))
+
+pgl <- curveplot(title = 'Global-extent studies', counts = subset(scalecounts,Scale=='global')$Freq)
+pco <- curveplot(title = 'Continental-extent studies', counts = subset(scalecounts,Scale=='continental')$Freq)
+pre <- curveplot(title = 'Regional-extent studies', counts = subset(scalecounts,Scale=='regional')$Freq)
+
+
+```
+
+**Proportion of gradients, grouped by spatial extent**  
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5, fig.width=7}
+library(gridExtra)
+grid.arrange(pre, pco, pgl, nrow=1, ncol=3)
+```
