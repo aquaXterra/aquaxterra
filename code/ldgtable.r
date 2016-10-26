@@ -2,8 +2,9 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 20 Oct 2016
-# Last modified: 25 Oct 2016
+# Last modified: 26 Oct 2016
 
+# Modified 26 Oct: compare results to Hillebrand's results
 # Modified 25 Oct: added classification by biome and scale of study, as well as some visualizations
 
 library(XLConnect)
@@ -122,3 +123,36 @@ library(gridExtra)
 pallscale <- arrangeGrob(pre, pco, pgl, nrow=1, ncol=3)
 
 ggsave('figs/curveplotsbyscale.png', pallscale, height=4, width=9, dpi=400)
+
+
+# Load Hillebrand data ----------------------------------------------------
+
+hill_a <- read.delim('C:/Users/Q/Google Drive/aquaxterra_watercube_all/literature/general_biodiversity/Latitudinal_diversity_freshwater/Reviews and classic papers/supplemental_info/Hillebrand2004_table_a1.txt', stringsAsFactors = FALSE)
+
+# Extract numbers from the slope column. For some reason the minus sign appears as a weird symbol.
+minuses <- grepl(x=hill_a$Slope.b, pattern='â')
+for (i in 1:nrow(hill_a)) {
+  if (minuses[i]) {
+    hill_a$Slope.b[i] <- substr(hill_a$Slope.b[i], 4, nchar(hill_a$Slope.b[i]))
+    hill_a$Slope.b[i] <- paste0('-', hill_a$Slope.b[i])
+  }
+}
+
+hill_a$Slope.b <- as.numeric(hill_a$Slope.b)
+
+hill_a <- transform(hill_a,
+                    ci_min = Slope.b - 1.96 * SE..b.,
+                    ci_max = Slope.b + 1.96 * SE..b.)
+
+hill_a$LDG <- 'none'
+hill_a$LDG[hill_a$ci_max < 0] <- 'standard'
+hill_a$LDG[hill_a$ci_min > 0] <- 'opposite'
+
+table(hill_a$LDG)
+with(hill_a, table(Realm, LDG))
+
+
+hillebrandtable <- myggtable(hill_a %>% filter(Realm != 'Aquatic') %>% mutate(LDG = factor(LDG, levels = c('standard','opposite','none'))), 'Realm', 'LDG', margin = 1) + 
+  oscale +
+  theme_table +
+  labs(x = 'Latitudinal Diversity Gradient', y = 'Realm') 

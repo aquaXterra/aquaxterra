@@ -1,7 +1,7 @@
 ---
 title: "Latitudinal Diversity Gradients in Freshwater"
 author: "Quentin D. Read"
-date: "October 25, 2016"
+date: "October 26, 2016"
 output: pdf_document
 ---
 
@@ -66,6 +66,7 @@ biometable <- myggtable(ldg, 'Biome', 'LDG', margin = 1) +
 
 * __20 Oct 2016__ created document
 * __25 Oct 2016__ added spatial scale, biome, and curve plots
+* __26 Oct 2016__ added Hillebrand's data
 
 # Introduction/Methods
 
@@ -156,4 +157,42 @@ pre <- curveplot(title = 'Regional-extent studies', counts = subset(scalecounts,
 ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5, fig.width=7}
 library(gridExtra)
 grid.arrange(pre, pco, pgl, nrow=1, ncol=3)
+```
+
+\newpage
+
+# Comparison with Hillebrand's meta-analysis
+
+In my reading, I noticed that a lot of authors stated that the LDG is ubiquitous across systems: terrestrial, marine, and freshwater. The 2004 meta-analysis by Hillebrand in Am Nat is a highly cited work on the subject. Hillebrand did find that the slope of the LDG is significantly negative for terrestrial, marine, and freshwater systems, when he ran a meta-analysis on the slopes from a lot of different studies. However, the effect size for freshwater is a lot lower than for the other realms, indicating that there are a lot more individual systems that don't play by the LDG rules. To look at this more closely, I pulled the raw data from appendix A of that manuscript, and "dumbed down" the dataset to make it comparable with our dataset. I did this by converting the slopes and standard errors he provided to a simple significance value. I multiplied the standard error by 1.96 to construct a confidence interval for the slope and checked whether each slope was significantly < 0 (standard), significantly > 0 (opposite), or overlapping 0 (no LDG). There were about 600 studies; Hillebrand really covered his bases. Only 60 of them are freshwater but that is still a sizable amount. You can see from the table below that the freshwater gradients are way more likely to be non-standard: only 35% are standard, compared to 58% for terrestrial and 87% for marine. This could be an important thing to highlight.
+
+**Contingency table by realm, data taken from Hillebrand 2004**  
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3.5, fig.width=4.5}
+
+hill_a <- read.delim('C:/Users/Q/Google Drive/aquaxterra_watercube_all/literature/general_biodiversity/Latitudinal_diversity_freshwater/Reviews and classic papers/supplemental_info/Hillebrand2004_table_a1.txt', stringsAsFactors = FALSE)
+
+# Extract numbers from the slope column. For some reason the minus sign appears as a weird symbol.
+minuses <- grepl(x=hill_a$Slope.b, pattern='â')
+for (i in 1:nrow(hill_a)) {
+  if (minuses[i]) {
+    hill_a$Slope.b[i] <- substr(hill_a$Slope.b[i], 4, nchar(hill_a$Slope.b[i]))
+    hill_a$Slope.b[i] <- paste0('-', hill_a$Slope.b[i])
+  }
+}
+
+hill_a$Slope.b <- as.numeric(hill_a$Slope.b)
+
+hill_a <- transform(hill_a,
+                    ci_min = Slope.b - 1.96 * SE..b.,
+                    ci_max = Slope.b + 1.96 * SE..b.)
+
+hill_a$LDG <- 'none'
+hill_a$LDG[hill_a$ci_max < 0] <- 'standard'
+hill_a$LDG[hill_a$ci_min > 0] <- 'opposite'
+
+hillebrandtable <- myggtable(hill_a %>% filter(Realm != 'Aquatic') %>% mutate(LDG = factor(LDG, levels = c('standard','opposite','none'))), 'Realm', 'LDG', margin = 1) + 
+  oscale +
+  theme_table +
+  labs(x = 'Latitudinal Diversity Gradient', y = 'Realm') 
+
+hillebrandtable
 ```
