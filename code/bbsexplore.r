@@ -2,7 +2,7 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 02 Nov 2016
-# Last modified:
+# Last modified: 03 Nov 2016
 
 # Read species list. Fix problems.
 bbsspp <- read.fwf('data/SpeciesList.txt', widths = c(7,5,50,50,50,50,50,50,50), stringsAsFactors=FALSE)
@@ -17,6 +17,9 @@ bbsspp[ii] <- lapply(bbsspp[ii], function(x) gsub('^\\s+|\\s+$', '', x))
 bbsspp$Seq <- as.numeric(bbsspp$Seq)
 bbsspp$AOU <- as.numeric(bbsspp$AOU)
 names(bbsspp)[5] <- 'Latin_Name'
+
+# Export CSV file
+write.csv(bbsspp, file = 'data/specieslist.csv', row.names = FALSE)
 
 # Load Phoebe's bbs data (stored locally on Q's machine, but is also available on HPCC)
 #load('C:/Users/Q/Dropbox/projects/aquaxterra/bbs6712.RData')
