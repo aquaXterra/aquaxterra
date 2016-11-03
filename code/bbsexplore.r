@@ -62,11 +62,33 @@ bbsmat <- bbsmat$s
 bbsmat <- do.call('rbind', bbsmat)
 #names(bbsmat)[-(1:3)] <- sppids
 
+# Run some taxonomic diversity metrics on this dataset
+#q0 <- d(bbsmat, lev = 'alpha', q = 0, boot = FALSE)
+#bbsdiv <- sapply(1:3, function(x) d(bbsmat, lev = 'alpha', q = x, boot = FALSE))
+
+# vegan pkg metrics
+bbsmat_richness <- apply(bbsmat > 0, 1, sum)
+bbsmat_shannon <- diversity(bbsmat, index = 'shannon')
+bbsmat_simpson <- diversity(bbsmat, index = 'simpson')
+bbsmat_shannonevenness <- bbsmat_shannon/log(bbsmat_richness)
+
+bbstaxdiv <- data.frame(bbsgrps, richness=bbsmat_richness, shannon=bbsmat_shannon, simpson=bbsmat_simpson, shannonevenness=bbsmat_shannonevenness)
+
 # Merge the richness data to the huc data if possible
 
-
-bbs_huc <- read.csv('data/BBS_SpatialJoin_Final.csv', stringsAsFactors = FALSE)
+load('~/data/bbstaxdiv.r')
+bbs_huc <- read.csv('CODE/python/BBSSpatialJoin/BBS_SpatialJoin_Final.csv', stringsAsFactors = FALSE)
 
 ns <- strsplit(bbs_huc$rtestopNo, '-')
-bbs_huc$route <- sapply(ns, '[', 1)
-bbs_huc$stopno <- sapply(ns, '[', 2)
+bbs_huc$rteNo <- sapply(ns, '[', 1)
+bbs_huc$Stop <- sapply(ns, '[', 2)
+
+bbstaxdiv <- bbstaxdiv %>% mutate(rteNo = as.numeric(as.character(rteNo)), Stop = as.numeric(gsub('[a-zA-Z]', '', as.character(Stop))))
+bbs_huc <- bbs_huc %>% mutate(rteNo = as.numeric(as.character(rteNo)), Stop = as.numeric(as.character(Stop))) 
+
+bbstaxdiv <- left_join(bbstaxdiv, bbs_huc  %>% select(rteNo, Stop, HUC4, HUC8, HUC12))
+
+# Aggregate by HUC and year
+mediantaxdiv_huc4 <- bbstaxdiv %>% group_by(year, HUC4) %>% summarize_at(vars(richness, shannon, simpson, shannonevenness), median)
+mediantaxdiv_huc8 <- bbstaxdiv %>% group_by(year, HUC8) %>% summarize_at(vars(richness, shannon, simpson, shannonevenness), median)
+mediantaxdiv_huc12 <- bbstaxdiv %>% group_by(year, HUC12) %>% summarize_at(vars(richness, shannon, simpson, shannonevenness), median)
