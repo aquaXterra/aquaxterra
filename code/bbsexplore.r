@@ -2,7 +2,7 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 02 Nov 2016
-# Last modified: 03 Nov 2016
+# Last modified: 04 Nov 2016
 
 # Read species list. Fix problems.
 bbsspp <- read.fwf('data/SpeciesList.txt', widths = c(7,5,50,50,50,50,50,50,50), stringsAsFactors=FALSE)
@@ -20,6 +20,42 @@ names(bbsspp)[5] <- 'Latin_Name'
 
 # Export CSV file
 write.csv(bbsspp, file = 'data/specieslist.csv', row.names = FALSE)
+
+# Get correct species list from the AOU and write to a better species list.
+library(XLConnect)
+aouspp <- readWorksheetFromFile('C:/Users/Q/Dropbox/projects/aquaxterra/splist_aou.xlsx', sheet='allnames')
+# Remove invalid names and add correct names
+goodnames <- aouspp$allnames[!aouspp$allnames %in% aouspp$Invalid.name]
+goodnames <- c(goodnames, aouspp$Correct.name[!is.na(aouspp$Correct.name)])
+write.table(goodnames, file = 'data/correctspecieslist.csv', row.names = FALSE)
+
+# 04 Nov: Yet another try to get the correct species list from the phylogeny. Match with the English names because the Latin ones don't necessarily match.
+bbsspp <- read.csv('data/specieslist.csv', stringsAsFactors = FALSE)
+birdtreespp <- read.csv('C:/Users/Q/Dropbox/projects/aquaxterra/BLIOCPhyloMasterTax.csv', stringsAsFactors = FALSE)
+
+# Check how many of the English common names in bbs list are in the phylogenetic list
+# Correct for cases
+bbsmatch <- tolower(bbsspp$English_Common_Name) %in% tolower(birdtreespp$English)
+badmatches <- bbsspp[!bbsmatch, c('English_Common_Name','Latin_Name')]
+write.csv(badmatches, file = 'C:/Users/Q/Dropbox/projects/aquaxterra/badmatchsppnames.csv', row.names=F)
+
+# Load corrected match names
+goodmatches <- read.csv(file = 'C:/Users/Q/Dropbox/projects/aquaxterra/correctedmatchsppnames.csv', stringsAsFactors = FALSE)
+
+finalnamelist <- bbsspp$English_Common_Name
+finalnamelist[!bbsmatch] <- NA
+finalnamelist[!bbsmatch] <- goodmatches$Correct_english
+
+bbsmatch2 <- tolower(finalnamelist) %in% tolower(birdtreespp$English)
+finalscinames <- birdtreespp$Scientific[tolower(birdtreespp$English) %in% tolower(finalnamelist)]
+
+write.csv(finalscinames, file = 'data/phylospecieslist.csv', row.names=FALSE)
+# Match AOUs with the final scientific names
+finalenglish <- birdtreespp$English[tolower(birdtreespp$English) %in% tolower(finalnamelist)]
+
+bbsspp$finalenglishname <- finalnamelist
+
+
 
 # Load Phoebe's bbs data (stored locally on Q's machine, but is also available on HPCC)
 #load('C:/Users/Q/Dropbox/projects/aquaxterra/bbs6712.RData')
