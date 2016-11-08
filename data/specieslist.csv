@@ -126,7 +126,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 246,2020,Black-crowned Night-Heron,Bihoreau gris,Nycticorax nycticorax,Pelecaniformes,Ardeidae,Nycticorax,nycticorax,Nycticorax nycticorax,,,species,
 247,2030,Yellow-crowned Night-Heron,Bihoreau violacé,Nyctanassa violacea,Pelecaniformes,Ardeidae,Nyctanassa,violacea,Nyctanassa violacea,,,species,
 248,2035,unid Black-crowned / Yellow-crowned Night-Heron,unid Bihoreau gris / Bihoreau violacé,Nycticorax / Nyctanassa nycticorax / violacea,Pelecaniformes,Ardeidae,Nycticorax / Nyctanassa,nycticorax / violacea,,,,unknown_sp,2020 2030
-250,1945,unid. Heron / Egret,unid héron / aigrette sp.,Ardeid sp.,Pelecaniformes,Ardeidae,Ardeid,sp.,,,,species,
+250,1945,unid. Heron / Egret,unid héron / aigrette sp.,Ardeid sp.,Pelecaniformes,Ardeidae,Ardeid,sp.,,,,unknown_genus,1900 1910 1940 1960 1961 1970 2000 1990 1980 2001 2010 2020 2030
 251,1840,White Ibis,Ibis blanc,Eudocimus albus,Pelecaniformes,Threskiornithidae,Eudocimus,albus,Eudocimus albus,,,species,
 253,1860,Glossy Ibis,Ibis falcinelle,Plegadis falcinellus,Pelecaniformes,Threskiornithidae,Plegadis,falcinellus,Plegadis falcinellus,,,species,
 254,1870,White-faced Ibis,Ibis à face blanche,Plegadis chihi,Pelecaniformes,Threskiornithidae,Plegadis,chihi,Plegadis chihi,,,species,
@@ -147,7 +147,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 278,3320,Sharp-shinned Hawk,Épervier brun,Accipiter striatus,Accipitriformes,Accipitridae,Accipiter,striatus,Accipiter striatus,,,species,
 279,3330,Cooper's Hawk,Épervier de Cooper,Accipiter cooperii,Accipitriformes,Accipitridae,Accipiter,cooperii,Accipiter cooperii,,,species,
 281,3340,Northern Goshawk,Autour des palombes,Accipiter gentilis,Accipitriformes,Accipitridae,Accipiter,gentilis,Accipiter gentilis,,,species,
-282,3333,unid. Accipiter Hawk,unid épervier sp.,Accipiter sp.,Accipitriformes,Accipitridae,Accipiter,sp.,,,,species,
+282,3333,unid. Accipiter Hawk,unid épervier sp.,Accipiter sp.,Accipitriformes,Accipitridae,Accipiter,sp.,,,,unknown_genus,3320 3330
 284,3450,Common Black Hawk,Buse noire,Buteogallus anthracinus,Accipitriformes,Accipitridae,Buteogallus,anthracinus,Buteogallus anthracinus,,,species,
 288,3350,Harris's Hawk,Buse de Harris,Parabuteo unicinctus,Accipitriformes,Accipitridae,Parabuteo,unicinctus,Parabuteo unicinctus,,,species,
 289,3410,White-tailed Hawk,Buse à queue blanche,Geranoaetus albicaudatus,Accipitriformes,Accipitridae,Geranoaetus,albicaudatus,Geranoaetus albicaudatus,,,species,
@@ -158,17 +158,17 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 295,3420,Swainson's Hawk,Buse de Swainson,Buteo swainsoni,Accipitriformes,Accipitridae,Buteo,swainsoni,Buteo swainsoni,,,species,
 296,3400,Zone-tailed Hawk,Buse à queue barrée,Buteo albonotatus,Accipitriformes,Accipitridae,Buteo,albonotatus,Buteo albonotatus,,,species,
 297,3370,Red-tailed Hawk,Buse à queue rousse,Buteo jamaicensis,Accipitriformes,Accipitridae,Buteo,jamaicensis,Buteo jamaicensis,,,species,
-298,3380,(Harlan's Hawk) Red-tailed Hawk,Buse à queue rousse (groupe harlani),Buteo jamaicensis harlani,Accipitriformes,Accipitridae,Buteo,jamaicensis harlani,Buteo jamaicensis harlani,,,species,
+298,3380,(Harlan's Hawk) Red-tailed Hawk,Buse à queue rousse (groupe harlani),Buteo jamaicensis harlani,Accipitriformes,Accipitridae,Buteo,jamaicensis harlani,Buteo jamaicensis harlani,,,subspecies,3370
 299,3470,Rough-legged Hawk,Buse pattue,Buteo lagopus,Accipitriformes,Accipitridae,Buteo,lagopus,Buteo lagopus,,,species,
-300,3451,unid. Buteo Hawk,unid Buse sp.,Buteo sp.,Accipitriformes,Accipitridae,Buteo,sp.,,,,species,
+300,3451,unid. Buteo Hawk,unid Buse sp.,Buteo sp.,Accipitriformes,Accipitridae,Buteo,sp.,,,,unknown_genus,3390 3430 3440 3420 3400 3370 3470 3480
 301,3480,Ferruginous Hawk,Buse rouilleuse,Buteo regalis,Accipitriformes,Accipitridae,Buteo,regalis,Buteo regalis,,,species,
 304,3490,Golden Eagle,Aigle royal,Aquila chrysaetos,Accipitriformes,Accipitridae,Aquila,chrysaetos,Aquila chrysaetos,,,species,
 309,2150,Yellow Rail,Râle jaune,Coturnicops noveboracensis,Gruiformes,Rallidae,Coturnicops,noveboracensis,Coturnicops noveboracensis,,,species,
 312,2160,Black Rail,Râle noir,Laterallus jamaicensis,Gruiformes,Rallidae,Laterallus,jamaicensis,Laterallus jamaicensis,,,species,
 314,2111,Ridgway's Rail,Râle de Californie,Rallus obsoletus,Gruiformes,Rallidae,Rallus,obsoletus,Rallus obsoletus,Rallus longirostris,,species,
-315,2110,Clapper Rail,Râle tapageur,Rallus crepitans,Gruiformes,Rallidae,Rallus,crepitans,Rallus crepitans,,,species,
+315,2110,Clapper Rail,Râle tapageur,Rallus crepitans,Gruiformes,Rallidae,Rallus,crepitans,Rallus crepitans,,,subspecies,2111
 317,2080,King Rail,Râle élégant,Rallus elegans,Gruiformes,Rallidae,Rallus,elegans,Rallus elegans,,,species,
-318,2090,unid. Clapper / King Rail,unid Râle élégant / Râle Gris,Rallus elegans /longirostris,Gruiformes,Rallidae,Rallus,elegans /longirostris,,,,unknown_sp,2080 2110
+318,2090,unid. Clapper / King Rail,unid Râle élégant / Râle Gris,Rallus elegans /longirostris,Gruiformes,Rallidae,Rallus,elegans /longirostris,,,,unknown_sp,2080 2111
 319,2120,Virginia Rail,Râle de Virginie,Rallus limicola,Gruiformes,Rallidae,Rallus,limicola,Rallus limicola,,,species,
 323,2140,Sora,Marouette de Caroline,Porzana carolina,Gruiformes,Rallidae,Porzana,carolina,Porzana carolina,,,species,
 327,21930,Purple Swamphen,Talève sultane,Porphyrio porphyrio,Gruiformes,Rallidae,Porphyrio,porphyrio,Porphyrio porphyrio,,,species,
@@ -694,7 +694,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 1405,5970,Blue Grosbeak,Guiraca bleu,Passerina caerulea,Passeriformes,Cardinalidae,Passerina,caerulea,Passerina caerulea,,,species,
 1406,5990,Lazuli Bunting,Passerin azuré,Passerina amoena,Passeriformes,Cardinalidae,Passerina,amoena,Passerina amoena,,,species,
 1407,5980,Indigo Bunting,Passerin indigo,Passerina cyanea,Passeriformes,Cardinalidae,Passerina,cyanea,Passerina cyanea,,,species,
-1408,5986,hybrid Lazuli Bunting x Indigo Bunting,hybride Passerin azuré x Passerin indigo,Passerina amoena x cyanea,Passeriformes,Cardinalidae,Passerina,amoena x cyanea,,,,hybrid,5880 5890
+1408,5986,hybrid Lazuli Bunting x Indigo Bunting,hybride Passerin azuré x Passerin indigo,Passerina amoena x cyanea,Passeriformes,Cardinalidae,Passerina,amoena x cyanea,,,,hybrid,5980 5990
 1411,6000,Varied Bunting,Passerin varié,Passerina versicolor,Passeriformes,Cardinalidae,Passerina,versicolor,Passerina versicolor,,,species,
 1412,6010,Painted Bunting,Passerin nonpareil,Passerina ciris,Passeriformes,Cardinalidae,Passerina,ciris,Passerina ciris,,,species,
 1413,6040,Dickcissel,Dickcissel d'Amérique,Spiza americana,Passeriformes,Cardinalidae,Spiza,americana,Spiza americana,,,species,
