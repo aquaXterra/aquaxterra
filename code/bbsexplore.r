@@ -99,6 +99,8 @@ bbsmat <- bbslong %>% group_by(year, rteNo, Stop) %>% do(s = get_spp(., sppids=s
 bbsgrps <- select(bbsmat, year, rteNo, Stop)
 bbsmat <- bbsmat$s
 bbsmat <- do.call('rbind', bbsmat)
+
+save(bbsgrps, bbsmat, sppids, file = 'DATA/raw_data/BBS/bbsmat.r')
 #names(bbsmat)[-(1:3)] <- sppids
 
 # Run some taxonomic diversity metrics on this dataset

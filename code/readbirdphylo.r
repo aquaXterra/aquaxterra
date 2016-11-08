@@ -2,6 +2,9 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 04 Nov 2016
+# Last modified: 08 Nov 2016
+
+# Modified 08 Nov: Resolve AOUs at random for each tree to create a new tree.
 
 library(ape)
 
@@ -18,7 +21,7 @@ tlabel1 <- gsub('_', ' ', tlabel1)
 
 bbsspp <- read.csv('DATA/raw_data/bird_traits/specieslist.csv', stringsAsFactors = FALSE)
 
-phymatch <- bbsspp$Latin_Name_clean %in% tlabel1 | bbsspp$Latin_Name_synonym %in% tlabel1 | bbsspp$Latin_Name_synonym2 %in% tlabel1
+#phymatch <- bbsspp$Latin_Name_clean %in% tlabel1 | bbsspp$Latin_Name_synonym %in% tlabel1 | bbsspp$Latin_Name_synonym2 %in% tlabel1
 
 # We must add some non-identified species to the tree.
 # The protocol should be: if it is unknown between 2 or 3 species, assign the unknown individual randomly to one of those species
@@ -27,7 +30,52 @@ phymatch <- bbsspp$Latin_Name_clean %in% tlabel1 | bbsspp$Latin_Name_synonym %in
 # If it is a hybrid, assign randomly to one of the parent species
 # If it is a subspecies, it gets the same ID as the undifferentiated species.
 
-library(phytools)
-spp_not_in_tree <- bbsspp[!phymatch, ]
+#library(phytools)
+#spp_not_in_tree <- bbsspp[!phymatch, ]
 # Manually edit these names then reload
-write.csv(spp_not_in_tree, file='DATA/raw_data/bird_traits/sppnotinphylo.csv', row.names=FALSE)
+#write.csv(spp_not_in_tree, file='DATA/raw_data/bird_traits/sppnotinphylo.csv', row.names=FALSE)
+
+# function to get pd out of each row
+
+# First, assign all species not in phylogeny to a species in the phylogeny
+
+library(stringr)
+AOU_lists <- lapply(str_extract_all(bbsspp$AOU_list, pattern = '[0-9]+'), as.numeric)
+resample <- function(x, ...) x[sample.int(length(x), ...)]
+
+toconsolidate <- bbsspp$AOU[sapply(AOU_lists,length)>0]
+idups <- sppids %in% toconsolidate
+
+fixedbbsmat <- list()
+pb <- txtProgressBar(0, nrow(bbsmat), style=3)
+
+for (j in 1:nrow(bbsmat)) {
+
+setTxtProgressBar(pb,j)
+
+x <- bbsmat[j,]
+
+# Reassign species randomly (must be done every time)
+AOU_final <- bbsspp$AOU
+for (i in 1:length(AOU_lists)) {
+  if (length(AOU_lists[[i]]) > 0) AOU_final[i] <- resample(AOU_lists[[i]], 1)
+}
+
+# Consolidate rows with multiple species ids
+
+ndups <- x[idups]
+aoudups <- sppids[idups]
+
+for (i in 1:length(ndups)) {
+	if (ndups[i] > 0) {
+		addto <- AOU_final[bbsspp$AOU == aoudups[i]]
+		x[which(sppids == addto)] <- x[which(sppids == addto)] + ndups[i]
+	}
+}
+
+x[idups] <- 0
+fixedbbsmat[[j]] <- x
+
+}
+
+close(pb)
