@@ -220,7 +220,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 409,2356,Rock Sandpiper,Bécasseau des Aléoutiennes,Calidris ptilocnemis,Charadriiformes,Scolopacidae,Calidris,ptilocnemis,Calidris ptilocnemis,,,species,
 410,2350,Purple Sandpiper,Bécasseau violet,Calidris maritima,Charadriiformes,Scolopacidae,Calidris,maritima,Calidris maritima,,,species,
 411,2410,Baird's Sandpiper,Bécasseau de Baird,Calidris bairdii,Charadriiformes,Scolopacidae,Calidris,bairdii,Calidris bairdii,,,species,
-412,2429,unid. small ''peep'' sandpiper,unid petit Bécasseau sp.,Calidris sp.,Charadriiformes,Scolopacidae,Calidris,sp.,,,,species,
+412,2429,unid. small ''peep'' sandpiper,unid petit Bécasseau sp.,Calidris sp.,Charadriiformes,Scolopacidae,Calidris,sp.,,,,unknown_genus,2340 2820 2380 2330 2422 2480 2340 2356 2350 2410 2420 2400 2620 2390 2460 2470
 414,2420,Least Sandpiper,Bécasseau minuscule,Calidris minutilla,Charadriiformes,Scolopacidae,Calidris,minutilla,Calidris minutilla,,,species,
 415,2400,White-rumped Sandpiper,Bécasseau à croupion blanc,Calidris fuscicollis,Charadriiformes,Scolopacidae,Calidris,fuscicollis,Calidris fuscicollis,,,species,
 416,2620,Buff-breasted Sandpiper,Bécasseau roussâtre,Calidris subruficollis,Charadriiformes,Scolopacidae,Calidris,subruficollis,Calidris subruficollis,Tryngites subruficollis,,species,
@@ -344,7 +344,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 651,4370,Lucifer Hummingbird,Colibri lucifer,Calothorax lucifer,Apodiformes,Trochilidae,Calothorax,lucifer,Calothorax lucifer,,,species,
 653,4280,Ruby-throated Hummingbird,Colibri à gorge rubis,Archilochus colubris,Apodiformes,Trochilidae,Archilochus,colubris,Archilochus colubris,,,species,
 654,4290,Black-chinned Hummingbird,Colibri à gorge noire,Archilochus alexandri,Apodiformes,Trochilidae,Archilochus,alexandri,Archilochus alexandri,,,species,
-655,4295,unid. Ruby-throated / Black-chinned Hummingbird,unid Colibri à gorge rubis / Colibri à gorge noi,re Archilochus colubris / alexandri,Apodiformes,Trochilidae,Archilochus,colubris / alexandri,,,,unknown_sp,4280 4290
+655,4295,unid. Ruby-throated / Black-chinned Hummingbird,unid Colibri à gorge rubis / Colibri à gorge noire,Archilochus colubris / alexandri,Apodiformes,Trochilidae,Archilochus,colubris / alexandri,,,,unknown_sp,4280 4290
 656,4310,Anna's Hummingbird,Colibri d'Anna,Calypte anna,Apodiformes,Trochilidae,Calypte,anna,Calypte anna,,,species,
 657,4300,Costa's Hummingbird,Colibri de Costa,Calypte costae,Apodiformes,Trochilidae,Calypte,costae,Calypte costae,,,species,
 660,4320,Broad-tailed Hummingbird,Colibri à queue large,Selasphorus platycercus,Apodiformes,Trochilidae,Selasphorus,platycercus,Selasphorus platycercus,,,species,
@@ -504,7 +504,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 1034,7340,Bridled Titmouse,Mésange arlequin,Baeolophus wollweberi,Passeriformes,Paridae,Baeolophus,wollweberi,Baeolophus wollweberi,,,species,
 1035,7330,Oak Titmouse,Mésange unicolore,Baeolophus inornatus,Passeriformes,Paridae,Baeolophus,inornatus,Baeolophus inornatus,,,species,
 1036,7331,Juniper Titmouse,Mésange des genévriers,Baeolophus ridgwayi,Passeriformes,Paridae,Baeolophus,ridgwayi,Baeolophus ridgwayi,,,species,
-1037,7332,unid. Oak Titmouse / Juniper Titmouse,unid unid Mésange unicolore / Mésange des genévr,ie Baeolophus inornatus / ridgwayi,Passeriformes,Paridae,Baeolophus,inornatus / ridgwayi,,,,unknown_sp,7330 7331
+1037,7332,unid. Oak Titmouse / Juniper Titmouse,unid unid Mésange unicolore / Mésange des genévrie,Baeolophus inornatus / ridgwayi,Passeriformes,Paridae,Baeolophus,inornatus / ridgwayi,,,,unknown_sp,7330 7331
 1038,7310,Tufted Titmouse,Mésange bicolore,Baeolophus bicolor,Passeriformes,Paridae,Baeolophus,bicolor,Baeolophus bicolor,,,species,
 1039,7320,Black-crested Titmouse,Mésange à plumet noir,Baeolophus atricristatus,Passeriformes,Paridae,Baeolophus,atricristatus,Baeolophus atricristatus,,,species,
 1040,7315,unid. Tufted Titmouse / Black-crested Titmouse,unid Mésange bicolore / Mésange à plumet noir,Baeolophus bicolor / atricristatus,Passeriformes,Paridae,Baeolophus,bicolor / atricristatus,,,,unknown_sp,7310 7320
@@ -625,7 +625,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 1251,6680,Townsend's Warbler,Paruline de Townsend,Setophaga townsendi,Passeriformes,Parulidae,Setophaga,townsendi,Setophaga townsendi,Dendroica townsendi,,species,
 1252,6690,Hermit Warbler,Paruline à tête jaune,Setophaga occidentalis,Passeriformes,Parulidae,Setophaga,occidentalis,Setophaga occidentalis,Dendroica occidentalis,,species,
 1253,6686,hybrid Townsend's Warbler x Hermit Warbler,hybride Paruline de Townsend x à tête jaune,Setophaga townsendi x occidentalis,Passeriformes,Parulidae,Setophaga,townsendi x occidentalis,,,,hybrid,6680 6690
-1254,6685,unid. Townsend's Warbler / Hermit Warbler,unid Paruline de Townsend / Paruline à tête jaun,e  Setophaga townsendi / occidentalis,Passeriformes,Parulidae,Setophaga,townsendi / occidentalis,,,,unknown_sp,6680 6690
+1254,6685,unid. Townsend's Warbler / Hermit Warbler,unid Paruline de Townsend / Paruline à tête jaune,Setophaga townsendi / occidentalis,Passeriformes,Parulidae,Setophaga,townsendi / occidentalis,,,,unknown_sp,6680 6690
 1255,6660,Golden-cheeked Warbler,Paruline à dos noir,Setophaga chrysoparia,Passeriformes,Parulidae,Setophaga,chrysoparia,Setophaga chrysoparia,Dendroica chrysoparia,,species,
 1256,6670,Black-throated Green Warbler,Paruline à gorge noire,Setophaga virens,Passeriformes,Parulidae,Setophaga,virens,Setophaga virens,Dendroica virens,,species,
 1261,6860,Canada Warbler,Paruline du Canada,Cardellina canadensis,Passeriformes,Parulidae,Cardellina,canadensis,Cardellina canadensis,Wilsonia canadensis,,species,
@@ -710,7 +710,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 1425,5110,Common Grackle,Quiscale bronzé,Quiscalus quiscula,Passeriformes,Icteridae,Quiscalus,quiscula,Quiscalus quiscula,,,species,
 1426,5130,Boat-tailed Grackle,Quiscale des marais,Quiscalus major,Passeriformes,Icteridae,Quiscalus,major,Quiscalus major,,,species,
 1427,5120,Great-tailed Grackle,Quiscale à longue queue,Quiscalus mexicanus,Passeriformes,Icteridae,Quiscalus,mexicanus,Quiscalus mexicanus,,,species,
-1428,5135,unid. Boat-tailed Grackle / Great-tailed Grackle,unid Quiscale des marais / Quiscale à longue que,ue Quiscalus major / mexicanus,Passeriformes,Icteridae,Quiscalus,major / mexicanus,,,,unknown_sp,5120 5130
+1428,5135,unid. Boat-tailed Grackle / Great-tailed Grackle,unid Quiscale des marais / Quiscale à longue queue,Quiscalus major / mexicanus,Passeriformes,Icteridae,Quiscalus,major / mexicanus,,,,unknown_sp,5120 5130
 1429,4961,Shiny Cowbird,Vacher luisant,Molothrus bonariensis,Passeriformes,Icteridae,Molothrus,bonariensis,Molothrus bonariensis,,,species,
 1430,4960,Bronzed Cowbird,Vacher bronzé,Molothrus aeneus,Passeriformes,Icteridae,Molothrus,aeneus,Molothrus aeneus,,,species,
 1431,4950,Brown-headed Cowbird,Vacher à tête brune,Molothrus ater,Passeriformes,Icteridae,Molothrus,ater,Molothrus ater,,,species,
