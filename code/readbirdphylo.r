@@ -20,6 +20,7 @@ tlabel1 <- t1$tip.label
 tlabel1 <- gsub('_', ' ', tlabel1)
 
 bbsspp <- read.csv('DATA/raw_data/bird_traits/specieslist.csv', stringsAsFactors = FALSE)
+load('DATA/raw_data/BBS/bbsmat.r')
 
 #phymatch <- bbsspp$Latin_Name_clean %in% tlabel1 | bbsspp$Latin_Name_synonym %in% tlabel1 | bbsspp$Latin_Name_synonym2 %in% tlabel1
 
@@ -79,3 +80,5 @@ fixedbbsmat[[j]] <- x
 }
 
 close(pb)
+
+save(fixedbbsmat, 'DATA/raw_data/bbsmatconsolidated.r')
