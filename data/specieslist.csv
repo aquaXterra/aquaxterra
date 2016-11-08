@@ -114,7 +114,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 225,1900,American Bittern,Butor d'Amérique,Botaurus lentiginosus,Pelecaniformes,Ardeidae,Botaurus,lentiginosus,Botaurus lentiginosus,,,species,
 227,1910,Least Bittern,Petit Blongios,Ixobrychus exilis,Pelecaniformes,Ardeidae,Ixobrychus,exilis,Ixobrychus exilis,,,species,
 229,1940,Great Blue Heron,Grand Héron,Ardea herodias,Pelecaniformes,Ardeidae,Ardea,herodias,Ardea herodias,,,species,
-230,1920,Great White Heron,Grand Héron (blanche),Ardea herodias occidentalis,Pelecaniformes,Ardeidae,Ardea,herodias occidentalis,Ardea herodias occidentalis,,,species,
+230,1920,Great White Heron,Grand Héron (blanche),Ardea herodias occidentalis,Pelecaniformes,Ardeidae,Ardea,herodias occidentalis,Ardea herodias occidentalis,,,subspecies,1940
 232,1960,Great Egret,Grande Aigrette,Ardea alba,Pelecaniformes,Ardeidae,Ardea,alba,Ardea alba,Egretta alba,Casmerodius albus,species,
 235,1961,Little Egret,Aigrette garzette,Egretta garzetta,Pelecaniformes,Ardeidae,Egretta,garzetta,Egretta garzetta,,,species,
 237,1970,Snowy Egret,Aigrette neigeuse,Egretta thula,Pelecaniformes,Ardeidae,Egretta,thula,Egretta thula,,,species,
