@@ -2,9 +2,12 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 04 Nov 2016
-# Last modified: 08 Nov 2016
+# Last modified: 10 Nov 2016
 
+# Modified 10 Nov: Add PD calculations for one test tree
 # Modified 08 Nov: Resolve AOUs at random for each tree to create a new tree.
+
+setwd('/mnt/research/aquaxterra/')
 
 library(ape)
 
@@ -22,7 +25,13 @@ tlabel1 <- gsub('_', ' ', tlabel1)
 bbsspp <- read.csv('DATA/raw_data/bird_traits/specieslist.csv', stringsAsFactors = FALSE)
 load('DATA/raw_data/BBS/bbsmat.r')
 
-#phymatch <- bbsspp$Latin_Name_clean %in% tlabel1 | bbsspp$Latin_Name_synonym %in% tlabel1 | bbsspp$Latin_Name_synonym2 %in% tlabel1
+phymatch <- bbsspp$Latin_Name_clean %in% tlabel1 | bbsspp$Latin_Name_synonym %in% tlabel1 | bbsspp$Latin_Name_synonym2 %in% tlabel1
+
+phymatchidx <- rep(NA,length(tlabel1))
+
+for (i in 1:length(tlabel1)) {
+	phymatchidx[i] <- c(which(bbsspp$Latin_Name_clean == tlabel1[i] | bbsspp$Latin_Name_synonym == tlabel1[i] | bbsspp$Latin_Name_synonym2 == tlabel1[i]), NA)[1]
+}
 
 # We must add some non-identified species to the tree.
 # The protocol should be: if it is unknown between 2 or 3 species, assign the unknown individual randomly to one of those species
@@ -38,47 +47,37 @@ load('DATA/raw_data/BBS/bbsmat.r')
 
 # function to get pd out of each row
 
-# First, assign all species not in phylogeny to a species in the phylogeny
+load('DATA/raw_data/BBS/bbsmatconsolidated.r') # Load fixed bbsmat.
 
-library(stringr)
-AOU_lists <- lapply(str_extract_all(bbsspp$AOU_list, pattern = '[0-9]+'), as.numeric)
-resample <- function(x, ...) x[sample.int(length(x), ...)]
+# Match the tip labels of ericson or hackett tree with the row names of the fixed bbs matrix.
 
-toconsolidate <- bbsspp$AOU[sapply(AOU_lists,length)>0]
-idups <- sppids %in% toconsolidate
+tlabelaou <- bbsspp$AOU[phymatchidx]
+ns <- colSums(fixedbbsmat)
+aoustoadd <- sppids[!sppids %in% tlabelaou & ns > 0] # AOUs that need to be added
 
-fixedbbsmat <- list()
-pb <- txtProgressBar(0, nrow(bbsmat), style=3)
-
-for (j in 1:nrow(bbsmat)) {
-
-setTxtProgressBar(pb,j)
-
-x <- bbsmat[j,]
-
-# Reassign species randomly (must be done every time)
-AOU_final <- bbsspp$AOU
-for (i in 1:length(AOU_lists)) {
-  if (length(AOU_lists[[i]]) > 0) AOU_final[i] <- resample(AOU_lists[[i]], 1)
+# Set dimnames of fixedbbsmat and tip labels of erictree to be the same.
+dimnames_tlabel <- rep(NA, length(tlabelaou))
+for (i in 1:length(tlabelaou)) {
+	names_i <- bbsspp[bbsspp$AOU == tlabelaou[i], c('Latin_Name')]
+	if (length(names_i)>0) dimnames_tlabel[i] <- names_i[1]
+}
+dimnames_matrix <- rep(NA, length(sppids))
+for (i in 1:length(sppids)) {
+	names_i <- bbsspp[bbsspp$AOU == sppids[i], c('Latin_Name')]
+	if (length(names_i)>0) dimnames_matrix[i] <- names_i[1]
 }
 
-# Consolidate rows with multiple species ids
+t1$tip.label <- dimnames_tlabel
+dimnames(fixedbbsmat)[[2]] <- dimnames_matrix
+fixedbbsmat_nonzero <- fixedbbsmat[, ns > 0]
 
-ndups <- x[idups]
-aoudups <- sppids[idups]
+# Actual calculation of pd, mpd, and mntd
 
-for (i in 1:length(ndups)) {
-	if (ndups[i] > 0) {
-		addto <- AOU_final[bbsspp$AOU == aoudups[i]]
-		x[which(sppids == addto)] <- x[which(sppids == addto)] + ndups[i]
-	}
-}
+library(picante)
 
-x[idups] <- 0
-fixedbbsmat[[j]] <- x
+ericsondist <- cophenetic(t1)
+pd_ericson <- pd(fixedbbsmat_nonzero, t1, include.root = TRUE)
+mpd_ericson <- ses.mpd(fixedbbsmat_nonzero, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
+mntd_ericson <- ses.mntd(fixedbbsmat_nonzero, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
 
-}
-
-close(pb)
-
-save(fixedbbsmat, 'DATA/raw_data/bbsmatconsolidated.r')
+save(pd_ericson, mpd_ericson, mntd_ericson, file = 'DATA/raw_data/bird_traits/bird_phylogeny/pd_test.r')
