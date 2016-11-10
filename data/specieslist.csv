@@ -150,8 +150,8 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 282,3333,unid. Accipiter Hawk,unid épervier sp.,Accipiter sp.,Accipitriformes,Accipitridae,Accipiter,sp.,,,,unknown_genus,3320 3330
 284,3450,Common Black Hawk,Buse noire,Buteogallus anthracinus,Accipitriformes,Accipitridae,Buteogallus,anthracinus,Buteogallus anthracinus,,,species,
 288,3350,Harris's Hawk,Buse de Harris,Parabuteo unicinctus,Accipitriformes,Accipitridae,Parabuteo,unicinctus,Parabuteo unicinctus,,,species,
-289,3410,White-tailed Hawk,Buse à queue blanche,Geranoaetus albicaudatus,Accipitriformes,Accipitridae,Geranoaetus,albicaudatus,Geranoaetus albicaudatus,,,species,
-291,3460,Gray Hawk,Buse grise,Buteo plagiatus,Accipitriformes,Accipitridae,Buteo,plagiatus,Buteo plagiatus,Asturina plagiata,,species,
+289,3410,White-tailed Hawk,Buse à queue blanche,Geranoaetus albicaudatus,Accipitriformes,Accipitridae,Geranoaetus,albicaudatus,Geranoaetus albicaudatus,Geranoaetus melanoleucus,,species,
+291,3460,Gray Hawk,Buse grise,Buteo plagiatus,Accipitriformes,Accipitridae,Buteo,plagiatus,Buteo plagiatus,Asturina plagiata,Buteo nitidus,species,
 292,3390,Red-shouldered Hawk,Buse à épaulettes,Buteo lineatus,Accipitriformes,Accipitridae,Buteo,lineatus,Buteo lineatus,,,species,
 293,3430,Broad-winged Hawk,Petite Buse,Buteo platypterus,Accipitriformes,Accipitridae,Buteo,platypterus,Buteo platypterus,,,species,
 294,3440,Short-tailed Hawk,Buse à queue courte,Buteo brachyurus,Accipitriformes,Accipitridae,Buteo,brachyurus,Buteo brachyurus,,,species,
@@ -230,7 +230,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 420,2310,Short-billed Dowitcher,Bécassin roux,Limnodromus griseus,Charadriiformes,Scolopacidae,Limnodromus,griseus,Limnodromus griseus,,,species,
 421,2320,Long-billed Dowitcher,Bécassin à long bec,Limnodromus scolopaceus,Charadriiformes,Scolopacidae,Limnodromus,scolopaceus,Limnodromus scolopaceus,,,species,
 422,2327,unid. Short-billed / Long-billed Dowitcher,unid Bécassin roux / Bécassin à long bec,Limnodromus griseus / scolopaceus,Charadriiformes,Scolopacidae,Limnodromus,griseus / scolopaceus,,,,unknown_sp,2310 2320
-424,2300,Wilson's Snipe,Bécassine de Wilson,Gallinago delicata,Charadriiformes,Scolopacidae,Gallinago,delicata,Gallinago delicata,Gallinago gallinago,,species,
+424,2300,Wilson's Snipe,Bécassine de Wilson,Gallinago delicata,Charadriiformes,Scolopacidae,Gallinago,delicata,Gallinago delicata,Gallinago gallinago,Gallinago andina,species,
 429,2280,American Woodcock,Bécasse d'Amérique,Scolopax minor,Charadriiformes,Scolopacidae,Scolopax,minor,Scolopax minor,,,species,
 430,2240,Wilson's Phalarope,Phalarope de Wilson,Phalaropus tricolor,Charadriiformes,Scolopacidae,Phalaropus,tricolor,Phalaropus tricolor,Steganopus tricolor,,species,
 431,2230,Red-necked Phalarope,Phalarope à bec étroit,Phalaropus lobatus,Charadriiformes,Scolopacidae,Phalaropus,lobatus,Phalaropus lobatus,,,species,
@@ -292,7 +292,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 522,3120,Band-tailed Pigeon,Pigeon à queue barrée,Patagioenas fasciata,Columbiformes,Columbidae,Patagioenas,fasciata,Patagioenas fasciata,,,species,
 525,3152,African Collared-Dove (a.k.a. Ringed Turtle-Dove),Tourterelle rieuse,Streptopelia roseogrisea,Columbiformes,Columbidae,Streptopelia,roseogrisea,Streptopelia roseogrisea,,,species,
 527,22860,Eurasian Collared-Dove,Tourterelle turque,Streptopelia decaocto,Columbiformes,Columbidae,Streptopelia,decaocto,Streptopelia decaocto,,,species,
-528,3151,Spotted Dove,Tourterelle tigrine,Streptopelia chinensis,Columbiformes,Columbidae,Streptopelia,chinensis,Streptopelia chinensis,Spilopelia chinensis,,species,
+528,3151,Spotted Dove,Tourterelle tigrine,Streptopelia chinensis,Columbiformes,Columbidae,Streptopelia,chinensis,Streptopelia chinensis,Spilopelia chinensis,Streptopelia orientalis,species,
 529,3210,Inca Dove,Colombe inca,Columbina inca,Columbiformes,Columbidae,Columbina,inca,Columbina inca,,,species,
 530,3200,Common Ground-Dove,Colombe à queue noire,Columbina passerina,Columbiformes,Columbidae,Columbina,passerina,Columbina passerina,,,species,
 532,3201,Ruddy Ground-Dove,Colombe rousse,Columbina talpacoti,Columbiformes,Columbidae,Columbina,talpacoti,Columbina talpacoti,,,species,
@@ -334,7 +334,7 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 604,4180,Common Poorwill,Engoulevent de Nuttall,Phalaenoptilus nuttallii,Caprimulgiformes,Caprimulgidae,Phalaenoptilus,nuttallii,Phalaenoptilus nuttallii,,,species,
 607,4160,Chuck-will's-widow,Engoulevent de Caroline,Antrostomus carolinensis,Caprimulgiformes,Caprimulgidae,Antrostomus,carolinensis,Antrostomus carolinensis,Caprimulgus carolinensis,,species,
 611,4171,Eastern Whip-poor-will,Engoulevent bois-pourri,Antrostomus vociferus,Caprimulgiformes,Caprimulgidae,Antrostomus,vociferus,Antrostomus vociferus,Caprimulgus vociferus,,species,
-612,4172,Mexican Whip-poor-will,Engoulevent d'Arizona,Antrostomus arizonae,Caprimulgiformes,Caprimulgidae,Antrostomus,arizonae,Antrostomus arizonae,Caprimulgus arizonae,,species,
+612,4172,Mexican Whip-poor-will,Engoulevent d'Arizona,Antrostomus arizonae,Caprimulgiformes,Caprimulgidae,Antrostomus,arizonae,Antrostomus arizonae,Caprimulgus arizonae,,not_in_phylo,4171
 617,4220,Black Swift,Martinet sombre,Cypseloides niger,Apodiformes,Apodidae,Cypseloides,niger,Cypseloides niger,,,species,
 622,4230,Chimney Swift,Martinet ramoneur,Chaetura pelagica,Apodiformes,Apodidae,Chaetura,pelagica,Chaetura pelagica,,,species,
 623,4240,Vaux's Swift,Martinet de Vaux,Chaetura vauxi,Apodiformes,Apodidae,Chaetura,vauxi,Chaetura vauxi,,,species,
@@ -519,14 +519,14 @@ Seq,AOU,English_Common_Name,French_Common_Name,Latin_Name,ORDER,Family,Genus,Spe
 1050,7170,Canyon Wren,Troglodyte des canyons,Catherpes mexicanus,Passeriformes,Troglodytidae,Catherpes,mexicanus,Catherpes mexicanus,,,species,
 1053,7210,House Wren,Troglodyte familier,Troglodytes aedon,Passeriformes,Troglodytidae,Troglodytes,aedon,Troglodytes aedon,,,species,
 1057,7221,Pacific Wren,Troglodyte de Baird,Troglodytes pacificus,Passeriformes,Troglodytidae,Troglodytes,pacificus,Troglodytes pacificus,Troglodytes troglodytes,,species,
-1058,7222,Winter Wren,Troglodyte des forêts,Troglodytes hiemalis,Passeriformes,Troglodytidae,Troglodytes,hiemalis,Troglodytes hiemalis,,,species,
+1058,7222,Winter Wren,Troglodyte des forêts,Troglodytes hiemalis,Passeriformes,Troglodytidae,Troglodytes,hiemalis,Troglodytes hiemalis,,,not_in_phylo,7221
 1059,7220,unid. Pacific Wren / Winter Wren,unid Troglodyte des forêts / Troglodyte de Baird,Troglodytes pacificus / hiemalis,Passeriformes,Troglodytidae,Troglodytes,pacificus / hiemalis,,,,unknown_sp,7221 7222
 1060,7240,Sedge Wren,Troglodyte à bec court,Cistothorus platensis,Passeriformes,Troglodytidae,Cistothorus,platensis,Cistothorus platensis,,,species,
 1061,7250,Marsh Wren,Troglodyte des marais,Cistothorus palustris,Passeriformes,Troglodytidae,Cistothorus,palustris,Cistothorus palustris,,,species,
 1062,7180,Carolina Wren,Troglodyte de Caroline,Thryothorus ludovicianus,Passeriformes,Troglodytidae,Thryothorus,ludovicianus,Thryothorus ludovicianus,,,species,
 1063,7190,Bewick's Wren,Troglodyte de Bewick,Thryomanes bewickii,Passeriformes,Troglodytidae,Thryomanes,bewickii,Thryomanes bewickii,,,species,
 1071,7130,Cactus Wren,Troglodyte des cactus,Campylorhynchus brunneicapillus,Passeriformes,Troglodytidae,Campylorhynchus,brunneicapillus,Campylorhynchus brunneicapillus,,,species,
-1075,16600,Sinaloa Wren,Troglodyte du Sinaloa,Thryophilus sinaloa,Passeriformes,Troglodytidae,Thryophilus,sinaloa,Thryophilus sinaloa,,,species,
+1075,16600,Sinaloa Wren,Troglodyte du Sinaloa,Thryophilus sinaloa,Passeriformes,Troglodytidae,Thryophilus,sinaloa,Thryophilus sinaloa,,,not_in_phylo,7180
 1082,7510,Blue-gray Gnatcatcher,Gobemoucheron gris-bleu,Polioptila caerulea,Passeriformes,Polioptilidae,Polioptila,caerulea,Polioptila caerulea,,,species,
 1083,7530,California Gnatcatcher,Gobemoucheron de Californie,Polioptila californica,Passeriformes,Polioptilidae,Polioptila,californica,Polioptila californica,,,species,
 1084,7520,Black-tailed Gnatcatcher,Gobemoucheron à queue noire,Polioptila melanura,Passeriformes,Polioptilidae,Polioptila,melanura,Polioptila melanura,,,species,
