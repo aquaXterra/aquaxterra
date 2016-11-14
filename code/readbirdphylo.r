@@ -76,8 +76,18 @@ fixedbbsmat_nonzero <- fixedbbsmat[, ns > 0]
 library(picante)
 
 ericsondist <- cophenetic(t1)
-pd_ericson <- pd(fixedbbsmat_nonzero, t1, include.root = TRUE)
-mpd_ericson <- ses.mpd(fixedbbsmat_nonzero, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
-mntd_ericson <- ses.mntd(fixedbbsmat_nonzero, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
 
-save(pd_ericson, mpd_ericson, mntd_ericson, file = 'DATA/raw_data/bird_traits/bird_phylogeny/pd_test.r')
+# Split this into smaller jobs that can be run in parallel.
+task <- as.numeric(Sys.getenv('PBS_ARRAYID'))
+
+xx <- round(seq(0, nrow(fixedbbsmat), length.out=11))
+xxmat <- cbind((xx+1)[-11], xx[-1])
+rowstouse <- (xxmat[task,1]:xxmat[task,2])
+
+x <- fixedbbsmat_nonzero[rowstouse,]
+
+pd_ericson <- pd(x, t1, include.root = TRUE)
+mpd_ericson <- ses.mpd(x, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
+mntd_ericson <- ses.mntd(x, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
+
+save(pd_ericson, mpd_ericson, mntd_ericson, file = paste0('DATA/raw_data/bird_traits/bird_phylogeny/pd_test',task,'.r'))
