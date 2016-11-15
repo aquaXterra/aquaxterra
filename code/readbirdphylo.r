@@ -2,19 +2,18 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 04 Nov 2016
-# Last modified: 10 Nov 2016
+# Last modified: 15 Nov 2016
 
+# Modified 15 Nov: Get rid of years older than 1997 (when modern bbs data was established)
 # Modified 10 Nov: Add PD calculations for one test tree
 # Modified 08 Nov: Resolve AOUs at random for each tree to create a new tree.
-
-setwd('/mnt/research/aquaxterra/')
 
 library(ape)
 
 # Read the randomly sampled 1000-tree subsets of the birdtree.org phylogenies (Ericson and Hackett versions)
 
-erictree <- read.nexus('DATA/raw_data/bird_traits/bird_phylogeny/ericson1000.tre')
-hacktree <- read.nexus('DATA/raw_data/bird_traits/bird_phylogeny/hackett1000.tre')
+erictree <- read.nexus('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/ericson1000.tre')
+hacktree <- read.nexus('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/hackett1000.tre')
 
 # Find which species on our species list are not given as tips of the tree.
 
@@ -22,8 +21,8 @@ t1 <- erictree[[1]]
 tlabel1 <- t1$tip.label
 tlabel1 <- gsub('_', ' ', tlabel1)
 
-bbsspp <- read.csv('DATA/raw_data/bird_traits/specieslist.csv', stringsAsFactors = FALSE)
-load('DATA/raw_data/BBS/bbsmat.r')
+bbsspp <- read.csv('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/specieslist.csv', stringsAsFactors = FALSE)
+load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmat.r')
 
 phymatch <- bbsspp$Latin_Name_clean %in% tlabel1 | bbsspp$Latin_Name_synonym %in% tlabel1 | bbsspp$Latin_Name_synonym2 %in% tlabel1
 
@@ -47,7 +46,9 @@ for (i in 1:length(tlabel1)) {
 
 # function to get pd out of each row
 
-load('DATA/raw_data/BBS/bbsmatconsolidated.r') # Load fixed bbsmat.
+load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmatconsolidated.r') # Load fixed bbsmat.
+
+fixedbbsmat <- fixedbbsmat[bbsgrps$year >= 1997, ]
 
 # Match the tip labels of ericson or hackett tree with the row names of the fixed bbs matrix.
 
@@ -90,4 +91,4 @@ pd_ericson <- pd(x, t1, include.root = TRUE)
 mpd_ericson <- ses.mpd(x, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
 mntd_ericson <- ses.mntd(x, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
 
-save(pd_ericson, mpd_ericson, mntd_ericson, file = paste0('DATA/raw_data/bird_traits/bird_phylogeny/pd_test',task,'.r'))
+save(pd_ericson, mpd_ericson, mntd_ericson, file = paste0('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/pd_test',task,'.r'))
