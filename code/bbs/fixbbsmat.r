@@ -45,4 +45,8 @@ fixedbbsmat[[j]] <- x
 close(pb)
 fixedbbsmat <- do.call('rbind', fixedbbsmat)
 
-save(fixedbbsmat, 'DATA/raw_data/bbsmatconsolidated.r')
+# Correct single typo in bbsmat which should get rid of one species that is in error (not sure why but it has AOU 81650 which isn't found anywhere)
+# added 16 Nov.
+fixedbbsmat[which(fixedbbsmat[,608]>0), 608] <- 0
+
+save(fixedbbsmat, file = 'DATA/raw_data/BBS/bbsmatconsolidated.r')

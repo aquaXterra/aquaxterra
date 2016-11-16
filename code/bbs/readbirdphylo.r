@@ -48,7 +48,7 @@ for (i in 1:length(tlabel1)) {
 
 load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmatconsolidated.r') # Load fixed bbsmat.
 
-fixedbbsmat <- fixedbbsmat[bbsgrps$year >= 1997, ]
+#fixedbbsmat <- fixedbbsmat[bbsgrps$year >= 1997, ]
 
 # Match the tip labels of ericson or hackett tree with the row names of the fixed bbs matrix.
 
