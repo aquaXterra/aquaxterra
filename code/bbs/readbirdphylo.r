@@ -2,9 +2,10 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 04 Nov 2016
-# Last modified: 15 Nov 2016
+# Last modified: 17 Nov 2016
 
-# Modified 15 Nov: Get rid of years older than 1997 (when modern bbs data was established)
+# Modified 17 Nov: Compile the precalculated phylogenetic diversity and save
+# Modified 15 Nov: Get rid of years older than 1997 (when modern bbs data was established) - later added them back in since that wasn't the problem.
 # Modified 10 Nov: Add PD calculations for one test tree
 # Modified 08 Nov: Resolve AOUs at random for each tree to create a new tree.
 
@@ -92,3 +93,26 @@ mpd_ericson <- ses.mpd(x, ericsondist, null.model = 'independentswap', abundance
 mntd_ericson <- ses.mntd(x, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
 
 save(pd_ericson, mpd_ericson, mntd_ericson, file = paste0('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/pd_test',task,'.r'))
+
+# Load the results and put them together.
+
+pd_all <- list()
+mpd_all <- list()
+mntd_all <- list()
+
+for (i in 1:10) {
+	load(paste0('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/pd_test',i,'.r'))
+	pd_all[[i]] <- pd_ericson
+	mpd_all[[i]] <- mpd_ericson
+	mntd_all[[i]] <- mntd_ericson
+}
+
+pd_all <- do.call('rbind', pd_all)
+mpd_all <- do.call('rbind', mpd_all)
+mntd_all <- do.call('rbind', mntd_all)
+
+load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmat.r')
+
+pd_all <- cbind(bbsgrps, pd_all, mpd_all, mntd_all[,-1])
+
+save(pd_all, file = '/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/pd_test_all.r')
