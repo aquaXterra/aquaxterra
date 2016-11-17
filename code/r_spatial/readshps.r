@@ -56,3 +56,11 @@ huc12endorheiclakes <- subset(huc12, grepl('Lake|lake', huc12@data$Name) & HUTyp
 huc12_toremove <- huc12@data$HUType == 'W' | (grepl('Lake|lake', huc12@data$Name) & huc12@data$HUType=='C' & !grepl('-', huc12@data$Name))
 
 huc12nolakes <- subset(huc12, !huc12_toremove)
+
+# Plot huc12 with good and bad areas noted.
+huc12@data$flag <- 1
+huc12@data$flag[huc12_toremove] <- 2
+
+png('~/hucflagmap.png', height=9, width=12, res=300, units='in')
+plot(huc12, col = c('skyblue','red')[huc12@data$flag])
+dev.off()
