@@ -4,6 +4,7 @@
 # Created: 02 Nov 2016
 
 bbs_huc <- read.csv('data/BBS_SpatialJoin_Final.csv', stringsAsFactors = FALSE)
+bbs_huc <- read.csv('/mnt/research/aquaxterra/CODE/python/BBSSpatialJoin/BBS_SpatialJoin_Final.csv', stringsAsFactors = FALSE)
 
 ns <- strsplit(bbs_huc$rtestopNo, '-')
 bbs_huc$route <- sapply(ns, '[', 1)
