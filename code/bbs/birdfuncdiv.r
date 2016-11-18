@@ -18,7 +18,7 @@ traitnames <- names(birdtrait)[c(15:24, 29:36, 40, 46:50, 53, 55:59)]
 
 
 # Match bird traits with the site by species matrix.
-traitmatch <- sppids %in% birdtrait$AOU # 65 don't match :-(
+# traitmatch <- sppids %in% birdtrait$AOU # 65 don't match :-(
 
 # Instead, use the consolidated matrix that was used for the phylogenetic diversity calculations.
 load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmat.r')
@@ -33,7 +33,7 @@ dimnames(fixedbbsmat_nonzero)[[2]] <- sppids_nonzero # Already sorted by AOU
 birdtraitclean <- birdtrait[match(sppids_nonzero, birdtrait$AOU), traitnames]
 dimnames(birdtraitclean)[[1]] <- sppids_nonzero
 
-# Make sure all columns are factors, even the binary variables.
+# Make sure all columns are numerics, even the binary variables.
 birdtraitclean <- transform(birdtraitclean, PelagicSpecialist = as.numeric(PelagicSpecialist), Nocturnal = as.numeric(Nocturnal))
 
 # Remove rows where no birds at all were found, flagging them for later.
@@ -49,7 +49,13 @@ library(FD)
 # The remaining traits are continuous traits with different units.
 # Argument w can be added to weight traits differently, but currently not weighted.
 
-# birdtrait_gowdist <- gowdis(x = birdtraitclean, asym.bin = grep('Pelagic', names(birdtraitclean)))
+# birdtrait_gowdist <- gowdis(x = birdtraitclean)
+
+# Attempt to construct distance matrix without NAs by removing the three species with very high NA's (they are also taxonomically weird)
+# This problem was fixed in another script.
+#badIDs <- c('3151', '3410', '3460')
+#birdtraitgoodids <- birdtraitclean[!dimnames(birdtraitclean)[[1]] %in% badIDs, ]
+# This works so we need to get rid of those bad IDs for the functional diversity. 
 
 # # Test FD with a small subset of the data.
 

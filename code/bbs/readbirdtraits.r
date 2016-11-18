@@ -2,8 +2,9 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 03 Nov 2016
-# Last modified: 08 Nov 2016
+# Last modified: 18 Nov 2016
 
+# Modified 18 Nov: Fixed three bad species with hard-coded patch. This makes the distance matrix work! yay
 # Modified 8 Nov: assign AOU and give some of the unresolved species a trait as well
 
 foraging <- read.delim('DATA/raw_data/bird_traits/foragingtraitdb/BirdFuncDat.txt', stringsAsFactors = FALSE)
@@ -45,5 +46,24 @@ library(dplyr)
 
 bbsspp <- left_join(bbsspp, foraging[,-(1:9)], by='AOU')
 bbsspp <- left_join(bbsspp, lifehist[,-(1:7)] %>% select(-Scientific), by='AOU')
+
+write.csv(bbsspp, file='DATA/raw_data/bird_traits/birdtraitmerged.csv', row.names=FALSE)
+
+# Added 18 Nov: Add the three species that don't have foraging traits to this master dataset and save it again.
+# Streptopelia, Buteo nitidus, and Geranoaetus
+
+bbsspp <- read.csv('DATA/raw_data/bird_traits/birdtraitmerged.csv', stringsAsFactors=FALSE)
+
+# Use mean genus values for Streptopelia, the correct species for Buteo nitidus, and the only other Geranoaetus sp. for Geranoaetus.
+streptopelia <- foraging[grep('Streptopelia', foraging$Scientific), ]
+streptopeliamean <- sapply(streptopelia, function(x) if (is.numeric(x)) mean(x) else names(table(x))[table(x) == max(table(x))][1])
+streptopeliamean <- as.data.frame(t(streptopeliamean))
+buteo_nitidus <- foraging[grep('Buteo nitidus', foraging$Scientific), ]
+geranoaetus <- foraging[grep('Geranoaetus', foraging$Scientific), ]
+
+# This is hard-coded but it's the best way to fix this annoying problem for only three rows.
+bbsspp[bbsspp$AOU == 3151, 15:45] <- streptopeliamean[10:40]
+bbsspp[bbsspp$AOU == 3410, 15:45] <- geranoaetus[1, 10:40]
+bbsspp[bbsspp$AOU == 3460, 15:45] <- buteo_nitidus[1, 10:40]
 
 write.csv(bbsspp, file='DATA/raw_data/bird_traits/birdtraitmerged.csv', row.names=FALSE)
