@@ -127,7 +127,7 @@ ggsave('figs/curveplotsbyscale.png', pallscale, height=4, width=9, dpi=400)
 
 # Load Hillebrand data ----------------------------------------------------
 
-hill_a <- read.delim('C:/Users/Q/Google Drive/aquaxterra_watercube_all/literature/general_biodiversity/Latitudinal_diversity_freshwater/Reviews and classic papers/supplemental_info/Hillebrand2004_table_a1.txt', stringsAsFactors = FALSE)
+hill_a <- read.delim('C:/Users/Q/Google Drive/aquaxterra_watercube_all/literature/Reviews and classic papers/supplemental_info/Hillebrand2004_table_a1.txt', stringsAsFactors = FALSE)
 
 # Extract numbers from the slope column. For some reason the minus sign appears as a weird symbol.
 minuses <- grepl(x=hill_a$Slope.b, pattern='â')
@@ -156,3 +156,5 @@ hillebrandtable <- myggtable(hill_a %>% filter(Realm != 'Aquatic') %>% mutate(LD
   oscale +
   theme_table +
   labs(x = 'Latitudinal Diversity Gradient', y = 'Realm') 
+
+ggsave('figs/ldg_table_hillebrand.png', hillebrandtable, height=5, width=6, dpi=400)
