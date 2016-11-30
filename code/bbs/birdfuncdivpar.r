@@ -77,7 +77,7 @@ library(FD)
 # Added 28 Nov: Since the code takes too long to run, split it into 10 bins and run it for each of the bins.
 
 task <- as.numeric(Sys.getenv('PBS_ARRAYID'))
-rowidx <- seq(0,nrow(fixedbbsmat_nonzerorows),length.out=11)
+rowidx <- round(seq(0,nrow(fixedbbsmat_nonzerorows),length.out=11))
 rowidxmin <- rowidx[task]+1
 rowidxmax <- rowidx[task+1]
 
@@ -91,3 +91,18 @@ fd_all <- dbFD(x = X, a = A[, !zerocols], w.abun = TRUE, corr = 'cailliez')
 save(fd_all, zerocols, file = file.path(fp, paste0('birdfuncdivobject', task, '.r')))
 
 # Fill back in the stops with zero birds, with zero for the species richness and NA for all functional diversity values.
+
+bfd_objects <- list()
+
+for (i in 1:10) {
+	load(file.path(fp, paste0('birdfuncdivobject', i, '.r')))
+	bfd_objects[[i]] <- with(fd_all, data.frame(nbsp, sing.sp, FRic, FEve, FDiv, FDis, RaoQ))
+}
+
+bfd_df <- do.call('rbind', bfd_objects)
+
+# Create df to hold the results, including the stops with zero birds.
+fd_all <- data.frame(bbsgrps, nbsp=0, sing.sp=0, FRic=NA, FEve=NA, FDiv=NA, FDis=NA, RaoQ=NA)
+fd_all[rs != 0, 4:10] <- bfd_df
+
+save(fd_all, file = file.path(fp, 'birdfuncdivobjectall.r'))
