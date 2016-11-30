@@ -113,11 +113,21 @@ bbsmat_shannon <- diversity(bbsmat, index = 'shannon')
 bbsmat_simpson <- diversity(bbsmat, index = 'simpson')
 bbsmat_shannonevenness <- bbsmat_shannon/log(bbsmat_richness)
 
+# Load the consolidated matrix that has the subspecies, hybrids, and unidentifiable species cleaned up a little bit.
+load('DATA/raw_data/BBS/bbsmatconsolidated.r')
+
+# Calculate the metrics on this consolidated matrix.
+bbsmat_richness <- apply(fixedbbsmat > 0, 1, sum)
+bbsmat_shannon <- diversity(fixedbbsmat, index = 'shannon')
+bbsmat_simpson <- diversity(fixedbbsmat, index = 'simpson')
+bbsmat_shannonevenness <- bbsmat_shannon/log(bbsmat_richness)
+
 bbstaxdiv <- data.frame(bbsgrps, richness=bbsmat_richness, shannon=bbsmat_shannon, simpson=bbsmat_simpson, shannonevenness=bbsmat_shannonevenness)
+save(bbstaxdiv, file = 'DATA/raw_data/BBS/bbstaxdiv.r')
 
 # Merge the richness data to the huc data if possible
 
-load('~/data/bbstaxdiv.r')
+load('DATA/raw_data/BBS/bbstaxdiv.r')
 bbs_huc <- read.csv('CODE/python/BBSSpatialJoin/BBS_SpatialJoin_Final.csv', stringsAsFactors = FALSE)
 
 ns <- strsplit(bbs_huc$rtestopNo, '-')
