@@ -45,3 +45,6 @@ bbsmat_byroute <- bbslong %>% group_by(year, rteNo) %>% do(s = get_spp(., sppids
 bbsgrps_byroute <- select(bbsmat_byroute, year, rteNo)
 bbsmat_byroute <- bbsmat_byroute$s
 bbsmat_byroute <- do.call('rbind', bbsmat_byroute)
+
+save(bbsmat, bbsgrps, bbsmat_byroute, bbsgrps_byroute, sppids, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmat2015.r')
+
