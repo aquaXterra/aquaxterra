@@ -1,11 +1,14 @@
 # Bird functional diversity calculations
-# QDR/Aquaxterra/created 17Nov2016/modified 18Nov2016
+# QDR/Aquaxterra/created 17Nov2016/modified 05Dec2016
 
+# Modified 05 Dec: Remove nocturnal birds (and remove nocturnal from the trait pca)
 
 fp <- '/mnt/research/aquaxterra/DATA/raw_data/bird_traits'
 birdtrait <- read.csv(file.path(fp, 'birdtraitmerged.csv'), stringsAsFactors = FALSE)
 
 birdtrait[birdtrait == -999] <- NA
+nocturnalbirds <- birdtrait$Latin_Name[birdtrait$Nocturnal == 1]
+birdtrait_diurnal <- subset(birdtrait, Nocturnal != 1)
 
 # Run principal components analysis on the bird traits.
 
@@ -14,7 +17,7 @@ birdtrait[birdtrait == -999] <- NA
 # Select traits to use
 # Ones that seem important and/or have a lot of records.
 # Includes diet, foraging strategy, body size, and life history.
-traitnames <- names(birdtrait)[c(15:24, 29:36, 40, 46:50, 53, 55:59)]
+traitnames <- names(birdtrait)[c(15:24, 29:36, 46:50, 53, 55:59)]
 
 
 # Match bird traits with the site by species matrix.
@@ -25,16 +28,16 @@ load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmat.r')
 load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmatconsolidated.r') # Load fixed bbsmat.
 
 ns <- colSums(fixedbbsmat)
-fixedbbsmat_nonzero <- fixedbbsmat[, ns > 0]
-sppids_nonzero <- sppids[ns > 0]
+fixedbbsmat_nonzero <- fixedbbsmat[, ns > 0 & !(dimnames(fixedbbsmat)[[2]] %in% nocturnalbirds)]
+sppids_nonzero <- sppids[ns > 0 & !(dimnames(fixedbbsmat)[[2]] %in% nocturnalbirds)]
 
 # Clean trait matrix and sort trait and sitexsp matrices so their dimensions all match.
 dimnames(fixedbbsmat_nonzero)[[2]] <- sppids_nonzero # Already sorted by AOU
-birdtraitclean <- birdtrait[match(sppids_nonzero, birdtrait$AOU), traitnames]
+birdtraitclean <- birdtrait_diurnal[match(sppids_nonzero, birdtrait_diurnal$AOU), traitnames]
 dimnames(birdtraitclean)[[1]] <- sppids_nonzero
 
-# Make sure all columns are numerics, even the binary variables.
-birdtraitclean <- transform(birdtraitclean, PelagicSpecialist = as.numeric(PelagicSpecialist), Nocturnal = as.numeric(Nocturnal))
+# Make sure all columns are numerics, even the binary variables. (nocturnal is no longer included here)
+birdtraitclean <- transform(birdtraitclean, PelagicSpecialist = as.numeric(PelagicSpecialist))
 
 # Remove rows where no birds at all were found, flagging them for later.
 rs <- apply(fixedbbsmat_nonzero, 1, sum)
