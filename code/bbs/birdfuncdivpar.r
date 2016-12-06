@@ -1,6 +1,7 @@
 # Bird functional diversity calculations
-# QDR/Aquaxterra/created 17Nov2016/modified 05Dec2016
+# QDR/Aquaxterra/created 17Nov2016/modified 06Dec2016
 
+# Modified 06 Dec: Use the updated BBS.
 # Modified 05 Dec: Remove nocturnal birds (and remove nocturnal from the trait pca)
 
 fp <- '/mnt/research/aquaxterra/DATA/raw_data/bird_traits'
@@ -19,13 +20,9 @@ birdtrait_diurnal <- subset(birdtrait, Nocturnal != 1)
 # Includes diet, foraging strategy, body size, and life history.
 traitnames <- names(birdtrait)[c(15:24, 29:36, 46:50, 53, 55:59)]
 
-
-# Match bird traits with the site by species matrix.
-# traitmatch <- sppids %in% birdtrait$AOU # 65 don't match :-(
-
-# Instead, use the consolidated matrix that was used for the phylogenetic diversity calculations.
-load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmat.r')
-load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmatconsolidated.r') # Load fixed bbsmat.
+# Use the consolidated matrix that was used for the phylogenetic diversity calculations.
+#load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmat.r')
+load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmatconsolidated2015.r') # Load fixed bbsmat.
 
 ns <- colSums(fixedbbsmat)
 fixedbbsmat_nonzero <- fixedbbsmat[, ns > 0 & !(dimnames(fixedbbsmat)[[2]] %in% nocturnalbirds)]

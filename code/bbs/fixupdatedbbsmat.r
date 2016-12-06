@@ -2,6 +2,7 @@
 
 # Fix bbs matrix (consolidating hybrids and such)
 bbsspp <- read.csv('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/specieslist.csv', stringsAsFactors = FALSE)
+load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmat2015.r')
 
 # First, assign all species not in phylogeny to a species in the phylogeny
 
@@ -93,4 +94,4 @@ fixedbbsmat_byroute <- do.call('rbind', fixedbbsmat_byroute)
 # Not necessary for the updated bbsmat?
 #fixedbbsmat[which(fixedbbsmat[,608]>0), 608] <- 0
 
-save(fixedbbsmat, fixedbbsmat_byroute, file = 'DATA/raw_data/BBS/bbsmatconsolidated2015.r')
+save(fixedbbsmat, fixedbbsmat_byroute, bbsgrps, bbsgrps_byroute, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmatconsolidated2015.r')

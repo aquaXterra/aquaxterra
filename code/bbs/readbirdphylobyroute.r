@@ -1,8 +1,9 @@
 # Read bird phylogenies and match to the real species names that we have. Also add species identified only to genus to the phylogeny.
+# Aggregated by route.
 # Author: QDR
 # Project: Aquaxterra
 # Created: 04 Nov 2016
-# Last modified: 06 Dec 2016
+# Last modified: 06 Dec 2016 (copied from readbirdphylopar.r)
 
 # Modified 06 Dec: Use the updated BBS.
 # Modified 05 Dec: instead of averaging the distance matrix, just make the whole thing repeat 10x with a single tree each time.
@@ -12,9 +13,8 @@
 # Modified 08 Nov: Resolve AOUs at random for each tree to create a new tree.
 
 # Extract task ID from the system.
-task <- as.numeric(Sys.getenv('PBS_ARRAYID')) # Tasks 1-100 (10 trees x 10 matrix slices)
-tree_to_use <- ceiling(task/10)
-slice_to_use <- rep(1:10, times = 10)[task]
+task <- as.numeric(Sys.getenv('PBS_ARRAYID')) # Only 10 tasks (1 for each tree). No need to slice matrix up since there aren't too many rows.
+tree_to_use <- task
 
 
 library(ape)
@@ -74,7 +74,7 @@ ericsondist <- cophenetic(t1)
 
 
 # Match the tip labels of ericson or hackett tree with the row names of the fixed bbs matrix.
-ns <- colSums(fixedbbsmat)
+ns <- colSums(fixedbbsmat_byroute)
 tlabelaou <- bbsspp$AOU[phymatchidx]
 aoustoadd <- sppids[!sppids %in% tlabelaou & ns > 0] # AOUs that need to be added
 
@@ -91,33 +91,19 @@ for (i in 1:length(sppids)) {
 }
 
 t1$tip.label <- dimnames_tlabel 
-dimnames(fixedbbsmat)[[2]] <- dimnames_matrix
-fixedbbsmat_nonzero <- fixedbbsmat[, ns > 0]
+dimnames(fixedbbsmat_byroute)[[2]] <- dimnames_matrix
+fixedbbsmat_byroute_nonzero <- fixedbbsmat[, ns > 0]
 
-fixedbbsmat_nonzero <- fixedbbsmat_nonzero[, !(dimnames(fixedbbsmat_nonzero)[[2]] %in% nocturnalbirds)]
+fixedbbsmat_byroute_nonzero <- fixedbbsmat_byroute_nonzero[, !(dimnames(fixedbbsmat_byroute_nonzero)[[2]] %in% nocturnalbirds)]
 
 # Actual calculation of pd, mpd, and mntd
 
 library(picante)
 
-# Split this into smaller jobs that can be run in parallel.
-
-
-xx <- round(seq(0, nrow(fixedbbsmat), length.out=11))
-xxmat <- cbind((xx+1)[-11], xx[-1])
-rowstouse <- (xxmat[slice_to_use,1]:xxmat[slice_to_use,2])
-
-x <- fixedbbsmat_nonzero[rowstouse,]
-
-# Mean PD across ten trees
-# allpds <- list()
-# for (i in 1:10) {
-	# allpds[[i]] <- pd(x, use_trees[[i]], include.root=TRUE)
-# }
-#pd_ericson <- apply(Reduce(cbind, lapply(allpds, function(x) x$PD)), 1, mean) # messed up way of getting average pd
+x <- fixedbbsmat_byroute_nonzero
 
 pd_ericson <- pd(x, t1, include.root = TRUE)
 mpd_ericson <- ses.mpd(x, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
 mntd_ericson <- ses.mntd(x, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
 
-save(pd_ericson, mpd_ericson, mntd_ericson, file = paste0('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/pd_tree',tree_to_use,'_part',slice_to_use, '.r'))
+save(pd_ericson, mpd_ericson, mntd_ericson, file = paste0('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/pd_tree',tree_to_use,'_byroute.r'))
