@@ -72,9 +72,7 @@ ericsondist <- cophenetic(t1)
 # Mean branch lengths across the ten randomly sampled trees
 # ericsondistmean <- apply(simplify2array(ericsondist), 1:2, mean)
 
-
 # Match the tip labels of ericson or hackett tree with the row names of the fixed bbs matrix.
-ns <- colSums(fixedbbsmat)
 tlabelaou <- bbsspp$AOU[phymatchidx]
 aoustoadd <- sppids[!sppids %in% tlabelaou & ns > 0] # AOUs that need to be added
 
@@ -92,6 +90,14 @@ for (i in 1:length(sppids)) {
 
 t1$tip.label <- dimnames_tlabel 
 dimnames(fixedbbsmat)[[2]] <- dimnames_matrix
+
+# Quick correction to fix two birds that aren't in the phylogeny. Just get rid of the eastern yellow wagtail since it's probably only in Alaska anyway.
+fixedbbsmat[, 'Artemisiospiza belli'] <- fixedbbsmat[, 'Artemisiospiza nevadensis'] + fixedbbsmat[, 'Artemisiospiza belli']
+fixedbbsmat[, 'Artemisiospiza nevadensis'] <- 0
+fixedbbsmat[, 'Motacilla tschutschensis'] <- 0
+
+
+ns <- colSums(fixedbbsmat)
 fixedbbsmat_nonzero <- fixedbbsmat[, ns > 0]
 
 fixedbbsmat_nonzero <- fixedbbsmat_nonzero[, !(dimnames(fixedbbsmat_nonzero)[[2]] %in% nocturnalbirds)]
