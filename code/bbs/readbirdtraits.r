@@ -67,3 +67,16 @@ bbsspp[bbsspp$AOU == 3410, 15:45] <- geranoaetus[1, 10:40]
 bbsspp[bbsspp$AOU == 3460, 15:45] <- buteo_nitidus[1, 10:40]
 
 write.csv(bbsspp, file='DATA/raw_data/bird_traits/birdtraitmerged.csv', row.names=FALSE)
+
+# Edited again on 07 Dec: Two other species don't have foraging traits. Replace them with the foraging traits of their congeners and save again.
+# Motacilla tschutschensis and Artemisiospiza nevadensis.
+motacilla <- foraging[grep('Motacilla', foraging$Scientific), ]
+motacillamean <- lapply(motacilla, function(x) if (is.numeric(x)) mean(x) else names(table(x))[table(x) == max(table(x))][1])
+motacillamean <- as.data.frame(motacillamean)
+
+artemisiospiza <- foraging[grep('Amphispiza belli', foraging$Scientific), ]
+
+bbsspp[bbsspp$AOU == 6960, 15:45] <- motacillamean[1, 10:40]
+bbsspp[bbsspp$AOU == 5738, 15:45] <- artemisiospiza[1, 10:40]
+
+write.csv(bbsspp, file='/mnt/research/aquaxterra/DATA/raw_data/bird_traits/birdtraitmerged.csv', row.names=FALSE)

@@ -94,4 +94,4 @@ fixedbbsmat_byroute <- do.call('rbind', fixedbbsmat_byroute)
 # Not necessary for the updated bbsmat?
 #fixedbbsmat[which(fixedbbsmat[,608]>0), 608] <- 0
 
-save(fixedbbsmat, fixedbbsmat_byroute, bbsgrps, bbsgrps_byroute, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmatconsolidated2015.r')
+save(fixedbbsmat, fixedbbsmat_byroute, bbsgrps, bbsgrps_byroute, sppids, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmatconsolidated2015.r')

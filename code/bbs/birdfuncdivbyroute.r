@@ -1,14 +1,15 @@
 # Bird functional diversity calculations: aggregated by route
 # QDR/Aquaxterra/created 06Dec2016 (copied from birdfuncdivpar.r)
 
+# Modified 07 Dec: Debug a lot.
 # Modified 05 Dec: Remove nocturnal birds (and remove nocturnal from the trait pca)
 
 fp <- '/mnt/research/aquaxterra/DATA/raw_data/bird_traits'
 birdtrait <- read.csv(file.path(fp, 'birdtraitmerged.csv'), stringsAsFactors = FALSE)
 
 birdtrait[birdtrait == -999] <- NA
-nocturnalbirds <- birdtrait$Latin_Name[birdtrait$Nocturnal == 1]
-birdtrait_diurnal <- subset(birdtrait, Nocturnal != 1)
+nocturnalbirdAOUs <- birdtrait$AOU[birdtrait$Nocturnal == 1]
+birdtrait_diurnal <- subset(birdtrait, Nocturnal != 1 | is.na(Nocturnal))
 
 # Select traits to use
 # Ones that seem important and/or have a lot of records.
@@ -19,8 +20,8 @@ traitnames <- names(birdtrait)[c(15:24, 29:36, 46:50, 53, 55:59)]
 load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmatconsolidated2015.r') # Load fixed bbsmat.
 
 ns <- colSums(fixedbbsmat_byroute)
-fixedbbsmat_byroute_nonzero <- fixedbbsmat_byroute[, ns > 0 & !(dimnames(fixedbbsmat_byroute)[[2]] %in% nocturnalbirds)]
-sppids_nonzero <- sppids[ns > 0 & !(dimnames(fixedbbsmat_byroute)[[2]] %in% nocturnalbirds)]
+fixedbbsmat_byroute_nonzero <- fixedbbsmat_byroute[, ns > 0 & !(sppids %in% nocturnalbirdAOUs)]
+sppids_nonzero <- sppids[ns > 0 & !(sppids %in% nocturnalbirdAOUs)]
 
 # Clean trait matrix and sort trait and sitexsp matrices so their dimensions all match.
 dimnames(fixedbbsmat_byroute_nonzero)[[2]] <- sppids_nonzero # Already sorted by AOU
