@@ -2,7 +2,7 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 02 Nov 2016
-# Last modified: 04 Nov 2016
+# Last modified: 07 Dec 2016
 
 # Read species list. Fix problems.
 bbsspp <- read.fwf('data/SpeciesList.txt', widths = c(7,5,50,50,50,50,50,50,50), stringsAsFactors=FALSE)
@@ -143,3 +143,29 @@ bbstaxdiv <- left_join(bbstaxdiv, bbs_huc  %>% select(rteNo, Stop, HUC4, HUC8, H
 mediantaxdiv_huc4 <- bbstaxdiv %>% group_by(year, HUC4) %>% summarize_at(vars(richness, shannon, simpson, shannonevenness), median)
 mediantaxdiv_huc8 <- bbstaxdiv %>% group_by(year, HUC8) %>% summarize_at(vars(richness, shannon, simpson, shannonevenness), median)
 mediantaxdiv_huc12 <- bbstaxdiv %>% group_by(year, HUC12) %>% summarize_at(vars(richness, shannon, simpson, shannonevenness), median)
+
+##########################################################
+# 07 Dec: Add TD, FD, and PD up to 2012 to the merged bbs and huc data. Hopefully this can be used to make some plots.
+
+# First load all bbs diversity data we have so far. This is the "old" dataset since I am still working on updating the new one.
+load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_div.r')
+bbs_huc <- read.csv('/mnt/research/aquaxterra/CODE/python/BBSSpatialJoin/BBS_SpatialJoin_Final.csv', stringsAsFactors = FALSE)
+
+ns <- strsplit(bbs_huc$rtestopNo, '-')
+bbs_huc$rteNo <- sapply(ns, '[', 1)
+bbs_huc$Stop <- sapply(ns, '[', 2)
+
+library(dplyr)
+
+bbs_div <- bbs_div %>% mutate(rteNo = as.numeric(as.character(rteNo)), Stop = as.numeric(gsub('[a-zA-Z]', '', as.character(Stop))))
+bbs_huc <- bbs_huc %>% mutate(rteNo = as.numeric(as.character(rteNo)), Stop = as.numeric(as.character(Stop))) 
+
+bbs_div <- left_join(bbs_div, bbs_huc  %>% select(rteNo, Stop, HUC4, HUC8, HUC12))
+
+bbs_coords <- read.csv('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_div_georeferenced.csv')
+bbs_div <- cbind(bbs_div, bbs_coords[, c('POINT_X', 'POINT_Y')])
+
+write.csv(bbs_div, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_div_georeferenced.csv', row.names = FALSE)
+
+# Subset out one year to download and plot things locally.
+write.csv(bbs_div %>% filter(year == 2011), file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_div_2011.csv', row.names = FALSE)
