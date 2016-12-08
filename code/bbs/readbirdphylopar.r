@@ -2,8 +2,9 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 04 Nov 2016
-# Last modified: 06 Dec 2016
+# Last modified: 08 Dec 2016
 
+# Modified 08 Dec: Extensive debugging
 # Modified 06 Dec: Use the updated BBS.
 # Modified 05 Dec: instead of averaging the distance matrix, just make the whole thing repeat 10x with a single tree each time.
 # Modified 03 Dec: average ten trees instead of using just one (follow Jarzyna); also get rid of nocturnal species.
@@ -64,15 +65,25 @@ nocturnalbirds <- bt$Latin_Name[bt$Nocturnal == 1]
 #fixedbbsmat <- fixedbbsmat[bbsgrps$year >= 1997, ]
 
 # The mean distance matrix must be calculated before matching up all the dimnames, because otherwise NA row names are made.
+# Edited 08 Dec: moved after, and get rid of the unused tips (should include all the NAs)
 
-ericsondist <- cophenetic(t1)
+# ericsondist <- cophenetic(t1)
 # Must sort the distance matrices so that they are all the same order.
 # roworder <- dimnames(ericsondist[[1]])[[1]]
 # ericsondist <- lapply(ericsondist, function(x) x[roworder, roworder])
 # Mean branch lengths across the ten randomly sampled trees
 # ericsondistmean <- apply(simplify2array(ericsondist), 1:2, mean)
 
+# Quick correction to fix two birds that aren't in the phylogeny. Just get rid of the eastern yellow wagtail since it's probably only in Alaska anyway.
+fixedbbsmat[, which(sppids == 5739)] <- fixedbbsmat[, which(sppids == 5738)] + fixedbbsmat[, which(sppids == 5739)]
+fixedbbsmat[, which(sppids == 5738)] <- 0
+fixedbbsmat[, which(sppids == 6960)] <- 0
+#fixedbbsmat[, 'Artemisiospiza belli'] <- fixedbbsmat[, 'Artemisiospiza nevadensis'] + fixedbbsmat[, 'Artemisiospiza belli']
+#fixedbbsmat[, 'Artemisiospiza nevadensis'] <- 0
+#fixedbbsmat[, 'Motacilla tschutschensis'] <- 0
+
 # Match the tip labels of ericson or hackett tree with the row names of the fixed bbs matrix.
+ns <- colSums(fixedbbsmat)
 tlabelaou <- bbsspp$AOU[phymatchidx]
 aoustoadd <- sppids[!sppids %in% tlabelaou & ns > 0] # AOUs that need to be added
 
@@ -91,16 +102,11 @@ for (i in 1:length(sppids)) {
 t1$tip.label <- dimnames_tlabel 
 dimnames(fixedbbsmat)[[2]] <- dimnames_matrix
 
-# Quick correction to fix two birds that aren't in the phylogeny. Just get rid of the eastern yellow wagtail since it's probably only in Alaska anyway.
-fixedbbsmat[, 'Artemisiospiza belli'] <- fixedbbsmat[, 'Artemisiospiza nevadensis'] + fixedbbsmat[, 'Artemisiospiza belli']
-fixedbbsmat[, 'Artemisiospiza nevadensis'] <- 0
-fixedbbsmat[, 'Motacilla tschutschensis'] <- 0
-
-
-ns <- colSums(fixedbbsmat)
 fixedbbsmat_nonzero <- fixedbbsmat[, ns > 0]
-
 fixedbbsmat_nonzero <- fixedbbsmat_nonzero[, !(dimnames(fixedbbsmat_nonzero)[[2]] %in% nocturnalbirds)]
+
+t1 <- drop.tip(phy = t1, tip = which(!t1$tip.label %in% dimnames(fixedbbsmat_nonzero)[[2]]))
+ericsondist <- cophenetic(t1)
 
 # Actual calculation of pd, mpd, and mntd
 
