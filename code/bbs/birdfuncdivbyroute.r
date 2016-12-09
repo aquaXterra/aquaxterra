@@ -48,3 +48,12 @@ X <- birdtraitclean[!zerocols, ]
 
 fd_all <- dbFD(x = X, a = A[, !zerocols], w.abun = TRUE, corr = 'cailliez')
 save(fd_all, zerocols, file = file.path(fp, 'birdfuncdivobjectbyroute.r'))
+
+# Compile functional diversity by route.
+load(file.path(fp, 'birdfuncdivobjectbyroute.r'))
+bfd_df_byroute <- with(fd_all, data.frame(nbsp, sing.sp, FRic, FEve, FDiv, FDis, RaoQ))
+
+fd_all_byroute <- data.frame(bbsgrps_byroute, nbsp=0, sing.sp=0, FRic=NA, FEve=NA, FDiv=NA, FDis=NA, RaoQ=NA)
+fd_all_byroute[rs != 0, 3:9] <- bfd_df_byroute
+
+save(fd_all_byroute, file = file.path(fp, 'birdfuncdivobjectbyrouteall.r'))
