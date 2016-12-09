@@ -3,8 +3,9 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 04 Nov 2016
-# Last modified: 08 Dec 2016
+# Last modified: 09 Dec 2016
 
+# Modified 09 Dec: Load and compile the PD values.
 # Modified 08 Dec: Extensive debugging
 # Modified 06 Dec: Use the updated BBS.
 # Modified 05 Dec: instead of averaging the distance matrix, just make the whole thing repeat 10x with a single tree each time.
@@ -117,3 +118,19 @@ mpd_ericson <- ses.mpd(x, ericsondist, null.model = 'independentswap', abundance
 mntd_ericson <- ses.mntd(x, ericsondist, null.model = 'independentswap', abundance.weighted = TRUE, runs = 999, iterations = 1000)
 
 save(pd_ericson, mpd_ericson, mntd_ericson, file = paste0('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/pd_tree',tree_to_use,'_byroute.r'))
+
+
+# Added 09 Dec. Load and compile the results.
+pd_byroute_all <- list()
+
+for (i in 1:10) {
+	load(file = paste0('/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/pd_tree',i,'_byroute.r'))
+	pd_byroute_all[[i]] <- list(pd_ericson, mpd_ericson, mntd_ericson)
+}
+
+# Combine each of the 10 list entries into a single data frame.
+pd_byroute_all <- lapply(pd_byroute_all, function(x) cbind(x[[1]], x[[2]][, -c(1,8)], x[[3]][, -c(1,8)]))
+# This list can be used for the uncertainty calculations later on. But to avoid opening that can of worms at the moment, I'll take the elementwise mean.
+
+pd_byroute_mean <- Reduce('+', pd_byroute_all)/length(pd_byroute_all)
+write.csv(pd_byroute_mean, file = '/mnt/research/aquaxterra/DATA/raw_data/bird_traits/bird_phylogeny/pd_byroute_mean.csv', row.names = FALSE)
