@@ -31,6 +31,33 @@ bbs_div_byroute <- cbind(bbsgrps_byroute, richness=bbsmat_richness, shannon=bbsm
 # Save the diversity only, can be georeferenced later.
 #save(bbs_div_byroute, file = 'DATA/raw_data/BBS/bbs_div_byroute.r')
 
+# Merge with HUCs
+
+bbs_huc <- read.csv(file.path(fp,'CODE/python/BBSSpatialJoin/BBS_SpatialJoin_Final.csv'), stringsAsFactors = FALSE)
+
+ns <- strsplit(bbs_huc$rtestopNo, '-')
+bbs_huc$rteNo <- sapply(ns, '[', 1)
+bbs_huc$Stop <- sapply(ns, '[', 2)
+
+# Get most common HUC from each rteNo
+# Throw out ones that do not have at least a strict majority (>25) within each watershed. This barely throws out any for HUC4, and few for HUC8, but won't work for HUC12. For now, let's just not include HUC12.
+
+huc48summary <- function (x) {
+	t4 <- table(x$HUC4)
+	t8 <- table(x$HUC8)
+	h4 <- names(t4)[which.max(t4)[1]]
+	h8 <- names(t8)[which.max(t8)[1]]
+	n4 <- max(t4)
+	n8 <- max(t8)
+	return(data.frame(HUC4 = h4, HUC8 = h8, nstops4 = n4, nstops8 = n8))
+}
+
+huctable <- bbs_huc %>% group_by(rteNo) %>% do(huc48summary(.))
+
+# merge bbs_div_byroute and huctable
+
+bbs_div_byroute <- left_join(bbs_div_byroute, huctable)
+
 # Load the bbs stop locations.
 
 library(rgdal)
