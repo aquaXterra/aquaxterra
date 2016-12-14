@@ -15,7 +15,7 @@ for (task in 1:10) {
 	print(task)
 }
 
-Acolsums <- sapply(Alist, colsums)
+Acolsums <- sapply(Alist, colSums)
 
 flag <- rep(0, nrow(Acolsums))
 

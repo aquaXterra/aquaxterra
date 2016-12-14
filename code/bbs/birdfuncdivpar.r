@@ -74,17 +74,17 @@ save(fd_all, zerocols, file = file.path(fp, paste0('birdfuncdivobject', task, '.
 
 # Fill back in the stops with zero birds, with zero for the species richness and NA for all functional diversity values.
 
-# bfd_objects <- list()
+bfd_objects <- list()
 
-# for (i in 1:10) {
-	# load(file.path(fp, paste0('birdfuncdivobject', i, '.r')))
-	# bfd_objects[[i]] <- with(fd_all, data.frame(nbsp, sing.sp, FRic, FEve, FDiv, FDis, RaoQ))
-# }
+for (i in 1:10) {
+	load(file.path(fp, paste0('birdfuncdivobject', i, '.r')))
+	bfd_objects[[i]] <- with(fd_all, data.frame(nbsp, sing.sp, FRic, FEve, FDiv, FDis, RaoQ))
+}
 
-# bfd_df <- do.call('rbind', bfd_objects)
+bfd_df <- do.call('rbind', bfd_objects)
 
-# # Create df to hold the results, including the stops with zero birds.
-# fd_all <- data.frame(bbsgrps, nbsp=0, sing.sp=0, FRic=NA, FEve=NA, FDiv=NA, FDis=NA, RaoQ=NA)
-# fd_all[rs != 0, 4:10] <- bfd_df
+# Create df to hold the results, including the stops with zero birds.
+fd_all <- data.frame(bbsgrps, nbsp=0, sing.sp=0, FRic=NA, FEve=NA, FDiv=NA, FDis=NA, RaoQ=NA)
+fd_all[rs != 0, 4:10] <- bfd_df
 
-# save(fd_all, file = file.path(fp, 'birdfuncdivobjectall.r'))
+save(fd_all, file = file.path(fp, 'birdfuncdivobjectall2015.r'))
