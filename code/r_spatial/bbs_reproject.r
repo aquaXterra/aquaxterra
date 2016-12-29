@@ -21,7 +21,17 @@ new_coords <- matrix(NA, nrow=nrow(bbs_div), ncol=2)
 new_coords[valid_coord,] <- bbs_aea@coords
 
 bbs_aea_coords <- data.frame(x_aea = new_coords[,1], y_aea = new_coords[,2])
-write.csv(bbs_aea_coords, file = file.path(fp, 'DATA/raw_data/BBS/bbs_aea_coords.csv'))
+write.csv(bbs_aea_coords, file = file.path(fp, 'DATA/raw_data/BBS/bbs_aea_coords.csv'), row.names = FALSE)
 
 # Also do this by route location.
-bbs_div_bystop <- 
+bbs_div_byroute <- read.csv(file = file.path(fp, 'DATA/raw_data/BBS/bbs_div_byroute.csv'))
+valid_coord <- !is.na(bbs_div_byroute$latitude)
+
+bbs_byroute_latlong <- SpatialPoints(coords = with(bbs_div_byroute[valid_coord,], data.frame(x = longitude, y = latitude)), proj4string = CRS(latlong_crs))
+bbs_byroute_aea <- spTransform(bbs_byroute_latlong, CRSobj = CRS(aea_crs))
+
+new_coords <- matrix(NA, nrow=nrow(bbs_div_byroute), ncol=2)
+new_coords[valid_coord,] <- bbs_byroute_aea@coords
+
+bbs_aea_coords_byroute <- data.frame(x_aea = new_coords[,1], y_aea = new_coords[,2])
+write.csv(bbs_aea_coords_byroute, file = file.path(fp, 'DATA/raw_data/BBS/bbs_aea_coords_byroute.csv'), row.names = FALSE)

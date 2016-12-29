@@ -2,6 +2,9 @@
 # Author: QDR
 # Project: Aquaxterra
 # Created: 09 Dec 2016
+# Last modified: 23 Dec 2016
+
+# Modified 23 Dec: join with new bbs data
 
 library(dplyr)
 
@@ -30,8 +33,7 @@ hu12_states <- read.delim(file.path(fp, 'hu12_states.txt'))
 hu12_all <- hu12_etc %>% full_join(hu12_chag) %>% full_join(hu12_conn) %>% full_join(hu12_lulc) %>% full_join(hu12_states)
 
 # Join the HUC4, HUC8, and HUC12 with bbs diversity.
-# Note: this is the "old" bbs dataset that only goes up to 2012.
-bbs_div <- read.csv('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_div_georeferenced.csv', stringsAsFactors = FALSE)
+bbs_div <- read.csv('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_div_reduced2015.csv', stringsAsFactors = FALSE)
 
 bbs_lagos_huc4 <- bbs_div %>% left_join(hu4_all %>% rename(HUC4 = hu4))
 bbs_lagos_huc8 <- bbs_div %>% left_join(hu8_all %>% rename(HUC8 = hu8))
@@ -41,3 +43,12 @@ bbs_lagos_huc12 <- bbs_div %>% left_join(hu12_all %>% rename(HUC12 = hu12))
 
 bbs_routeavg <- bbs_div %>% group_by(year, rteNo) %>% select(-Stop) %>% summarize_all(.funs = mean, na.rm = TRUE)
 bbs_routeavg_tenyears <- bbs_routeavg %>% filter(year >= 2001 & year <= 2011) %>% group_by(rteNo) %>% select(-year) %>% summarize_all(.funs = mean, na.rm = TRUE)
+
+# Load by-route BBS data and join
+bbs_div_byroute <- read.csv('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_div_byroute.csv', stringsAsFactors = FALSE)
+bbs_byroute_lagos_huc4 <- bbs_div_byroute %>% left_join(hu4_all %>% rename(HUC4 = hu4))
+bbs_byroute_lagos_huc8 <- bbs_div_byroute %>% left_join(hu8_all %>% rename(HUC8 = hu8))
+
+# Save all joined data frames.
+save(bbs_lagos_huc4, bbs_lagos_huc8, bbs_lagos_huc12, file  = '/mnt/research/aquaxterra/DATA/raw_data/BBS/BBS_LAGOS_bystop_join.r')
+save(bbs_byroute_lagos_huc4, bbs_byroute_lagos_huc8, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/BBS_LAGOS_byroute_join.r')
