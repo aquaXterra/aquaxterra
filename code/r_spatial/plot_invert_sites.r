@@ -33,9 +33,23 @@ huc8map <- ggplot() +
 
 ggsave('~/invertmap.png', huc8map, height = 8, width = 12, dpi = 300)
 
-# Plot one with just the site points
+# Plot a map with just the site points
 
 sitemap <- ggplot(sites, aes(x=LongitudeMeasure, y=LatitudeMeasure)) +
 	borders('state', fill = 'beige') +
 	coord_map() +
 	geom_point()
+	
+# Cut out a single HUC8 and plot it, with the accompanying points
+
+# Pick the Grand River
+onehuc <- subset(huc8, NAME == 'Lower Grand' & STATES == 'MI')
+
+# Get out all the site coordinates that are inside the polygon using the over() function
+where_overlap <- sp::over(x = sites_aea, y = as(onehuc, 'SpatialPolygons'))
+
+onehucplot <- ggplot() + 
+	geom_path(data = onehuc, aes(x=long,y=lat,group=group)) + 
+	geom_point(data = site_coords[where_overlap == 1, ], aes(x=x, y=y), color = 'gray50', alpha = 0.5) +
+	coord_equal() +
+	theme_bw()
