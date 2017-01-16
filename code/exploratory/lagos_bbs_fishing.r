@@ -115,9 +115,11 @@ huc12stopcat <- cut(abs(huc12stoppairs), 10)
 
 # Create heat map of correlations.
 # For ggplot2 to make a heat map, we need to convert the correlation matrices to long format.
+# Also try not to load reshape2, then dplyr. It causes problems. This order is good.
+library(dplyr)
 library(reshape2)
 library(ggplot2)
-library(dplyr)
+
 
 huc4stoppairs_long <- melt(huc4stoppairs, varnames = c('bird_var','huc_var')) %>% mutate(huc_var = substr(as.character(huc_var), 1, 25))
 huc8stoppairs_long <- melt(huc8stoppairs, varnames = c('bird_var','huc_var')) %>% mutate(huc_var = substr(as.character(huc_var), 1, 25))
@@ -133,7 +135,7 @@ phuc4 <- ggplot(huc4stoppairs_long, aes(x = huc_var, y = bird_var, fill = value)
 		  panel.grid = element_blank(),
 		  panel.background = element_rect(fill = 'black'),
 		  axis.ticks = element_blank(), 
-		  axis.text.x = element_text(size = 5, angle = 270, hjust = 0, colour = "grey50"))
+		  axis.text.x = element_text(size = 5, angle = 270, hjust=0, vjust=0, colour = "grey50"))
 		  
 phuc8 <- ggplot(huc8stoppairs_long, aes(x = huc_var, y = bird_var, fill = value)) +
 	geom_tile(color = 'black') +
@@ -144,7 +146,7 @@ phuc8 <- ggplot(huc8stoppairs_long, aes(x = huc_var, y = bird_var, fill = value)
 		  panel.grid = element_blank(),
 		  panel.background = element_rect(fill = 'black'),
 		  axis.ticks = element_blank(), 
-		  axis.text.x = element_text(size = 5, angle = 270, hjust = 0, colour = "grey50"))	
+		  axis.text.x = element_text(size = 5, angle = 270, hjust = 0, vjust = 0, colour = "grey50"))	
 
 phuc12 <- ggplot(huc12stoppairs_long, aes(x = huc_var, y = bird_var, fill = value)) +
 	geom_tile(color = 'black') +
@@ -155,7 +157,7 @@ phuc12 <- ggplot(huc12stoppairs_long, aes(x = huc_var, y = bird_var, fill = valu
 		  panel.grid = element_blank(),
 		  panel.background = element_rect(fill = 'black'),
 		  axis.ticks = element_blank(), 
-		  axis.text.x = element_text(size = 5, angle = 270, hjust = 0, colour = "grey50"))		  
+		  axis.text.x = element_text(size = 5, angle = 270, hjust = 0, vjust = 0, colour = "grey50"))		  
 		  
 ggsave('/mnt/research/aquaxterra/FIGS/bbs_lagos_pairplots/bbs_bystop_lagos_huc4_heatmap.png', phuc4, height = 4, width = 16, dpi = 400)
 ggsave('/mnt/research/aquaxterra/FIGS/bbs_lagos_pairplots/bbs_bystop_lagos_huc8_heatmap.png', phuc8, height = 4, width = 16, dpi = 400)
