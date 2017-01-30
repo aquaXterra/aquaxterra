@@ -29,7 +29,7 @@ huc4_fort <- fortify(huc4, region = 'id') %>% left_join(huc4@data, by = 'id')
 rbcolors <- rev(RColorBrewer::brewer.pal(9, 'RdYlBu'))
 purple8colors <- c('#fcfbfd','#efedf5','#dadaeb','#bcbddc','#9e9ac8','#807dba','#6a51a3','#54278f','#3f007d')[-1]
 elevcolors <- topo.colors(9)
-yellowtogreencolors <- colorRampPalette(c('forestgreen','lightgoldenrod01'))(9)
+yellowtogreencolors <- colorRampPalette(c('forestgreen','lightgoldenrod1'))(9)
 browntogreencolors <- c('#8c510a','#bf812d','#dfc27d','#f6e8c3','#f5f5f5','#c7eae5','#80cdc1','#35978f','#01665e')
 browntobluecolors <- colorRampPalette(c('tan','skyblue'))(9)
 

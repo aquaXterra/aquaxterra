@@ -66,7 +66,7 @@ pairplot_bygroup <- function(dat, x, y, filename) {
 			th <- theme_bw()
 			if (i != length(y)) th <- th + theme(axis.title.x = element_blank())
 			if (j != 1) th <- th + theme(axis.title.y = element_blank())
-			plot_list[[length(plot_list) + 1]] <- ggplot(dat, aes_string(x = names(dat)[x[j]], y = names(dat)[y[i]])) + geom_point() + th
+			plot_list[[length(plot_list) + 1]] <- ggplot(dat, aes_string(x = names(dat)[x[j]], y = names(dat)[y[i]])) + geom_point(alpha = 0.3) + th
 			setTxtProgressBar(pb, j + length(x)*(i-1))
 		}
 	}

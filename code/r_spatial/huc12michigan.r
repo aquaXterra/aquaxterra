@@ -1,0 +1,13 @@
+library(raster)
+library(maptools)
+library(ggplot2)
+library(rgdal)
+library(sp)
+library(dplyr)
+
+huc12 <- readOGR(dsn='/mnt/research/aquaxterra/DATA/reprojected_data/HUC', layer = 'HU12_CONUS_Alb')
+huc12mich <- subset(huc12, grepl('MI', huc12@data$STATES))
+#save(huc12mich, file = '~/data/huc12mich.r')
+huc12mich@data <- huc12mich@data %>% mutate(HUC12 = as.numeric(as.character(HUC12)), id = rownames(huc12mich@data))
+huc12fort <- fortify(huc12mich, region = 'id')
+save(huc12fort, file = '~/data/huc12fort.r')

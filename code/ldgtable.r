@@ -4,6 +4,7 @@
 # Created: 20 Oct 2016
 # Last modified: 26 Oct 2016
 
+# Modified 27 Jan: Add size to table
 # Modified 26 Oct: compare results to Hillebrand's results
 # Modified 25 Oct: added classification by biome and scale of study, as well as some visualizations
 
@@ -34,7 +35,7 @@ myggtable <- function (data, var1, var2, margin = NULL)
   rawtable = table(data[[var1]], data[[var2]]) %>% as.data.frame()
   d_table = t_table %>% as.data.frame()
   ggplot(d_table, aes(Var2, Var1)) + geom_tile(aes(fill = Freq), color = 'black') + 
-    geom_text(aes(label = round(Freq, 2)), data = rawtable) + scale_fill_continuous(name = "Proportion") + 
+    geom_text(aes(label = round(Freq, 2), size = (Freq + 5) * 0.5), data = rawtable) + scale_fill_continuous(name = "Proportion") + 
     ylab(substitute(var1)) + xlab(substitute(var2))
 }
 

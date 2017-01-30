@@ -11,7 +11,15 @@ for (i in 1:10) {
 
 bbsdf <- do.call('rbind', bbsdf)
 
+# Modification 30 Jan: find the routes and years that have multiple runs. Get the 101 for those runs as well.
+
 bbsdf_otherprotocol <- subset(bbsdf, RPID != 101)
+bbsdf101 <- subset(bbsdf, RPID == 101 & paste(statenum, Route, year) %in% with(bbsdf_otherprotocol, paste(statenum, Route, year)))
+bbsdf_otherprotocol <- rbind(bbsdf_otherprotocol, bbsdf101)
+
+# Get only the repeated sample protocol routes
+bbsdf_repeated <- subset(bbsdf_otherprotocol, RPID %in% 101:104)
+save(bbsdf_repeated, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_repeated.r')
 
 library(dplyr)
 library(reshape2)
