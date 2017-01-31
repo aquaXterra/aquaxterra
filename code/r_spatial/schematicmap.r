@@ -36,13 +36,17 @@ library(ggplot2)
 huc8@data <- huc8@data %>% mutate(HUC8 = as.numeric(as.character(HUC8)), id = rownames(huc8@data))
 huc8fort <- fortify(huc8, region = 'id')
 
-# Load huc12 for only Michigan
-load('C:/Users/Q/Dropbox/projects/aquaxterra/hucshapefiles/huc12mich.r')
-
-huc12mich@data <- huc12mich@data %>% mutate(HUC12 = as.numeric(as.character(HUC12)), id = rownames(huc12mich@data))
-huc12fort <- fortify(huc12mich, region = 'id')
-
 ggplot(huc8fort, aes(long,lat, group=group)) + geom_path() + coord_map(projection = 'albers', lat0=23, lat1=29.5)
+
+
+# Load huc12 for only Michigan
+# load('C:/Users/Q/Dropbox/projects/aquaxterra/hucshapefiles/huc12mich.r')
+# 
+# huc12mich@data <- huc12mich@data %>% mutate(HUC12 = as.numeric(as.character(HUC12)), id = rownames(huc12mich@data))
+# huc12fort <- fortify(huc12mich, region = 'id')
+
+# Load pre-fortified huc12 data for Michigan (very large)
+load('C:/Users/Q/Dropbox/projects/aquaxterra/hucshapefiles/huc12fort.r')
 
 # Subset to a single route.
 # Monterey, MI.
@@ -78,12 +82,10 @@ xylonlat <- expand.grid(long=xcoordslon, lat=ycoordslat)
 michlong <- c(-89.9, -82.5)
 michlat <- c(41.7, 46.9)
 # This does not work.
-mich01grid <- expand.grid(long = seq(michlong[1], michlong[2], by=0.1), lat = seq(michlat[1], michlat[2], by=0.1))
-mich01gridsp <- SpatialPoints(coords=mich01grid, proj4string = CRS(latlong_crs))
-mich01gridaea <- spTransform(mich01gridsp, CRSobj = CRS(aea_crs))
-mich01gridaeadf <- data.frame(long=mich01gridaea@coords[,1], lat=mich01gridaea@coords[,2])
-
-mich01gridmanual <- expand.grid(long = seq())
+#mich01grid <- expand.grid(long = seq(michlong[1], michlong[2], by=0.1), lat = seq(michlat[1], michlat[2], by=0.1))
+#mich01gridsp <- SpatialPoints(coords=mich01grid, proj4string = CRS(latlong_crs))
+#mich01gridaea <- spTransform(mich01gridsp, CRSobj = CRS(aea_crs))
+#mich01gridaeadf <- data.frame(long=mich01gridaea@coords[,1], lat=mich01gridaea@coords[,2])
 
 ggplot(huc8fort, aes(long,lat)) + 
   geom_path(aes(group=group)) + coord_map() + 
@@ -108,9 +110,9 @@ ggplot(bbsoneroute, aes(long,lat)) +
   theme_void() + coord_fixed(ratio=1)
 
 
-ggplot(mich01gridaeadf) + geom_tile(aes(x=long,y=lat), fill='skyblue',color='black')
+#ggplot(mich01gridaeadf) + geom_tile(aes(x=long,y=lat), fill='skyblue',color='black')
 
-mytheme <- theme_bw() + theme(panel.grid=element_blank(), axis.text.x = element_blank(), axis.text.y = element_blank(), axis.title.x = element_blank(), axis.title.y = element_blank(), legend.position='none')
+mytheme <- theme_bw() + theme(panel.grid=element_blank(), axis.text.x = element_blank(), axis.text.y = element_blank(), axis.title.x = element_blank(), axis.title.y = element_blank(), axis.ticks.x = element_blank(), axis.ticks.y = element_blank(), legend.position='none')
 
 ggplot(huc8fort, aes(long,lat)) +
   geom_path(aes(group=group)) + coord_fixed(ratio = 1, xlim=c(minlong-20000, maxlong+20000), ylim=c(minlat-20000, maxlat+20000)) +
@@ -125,22 +127,11 @@ ggplot(huc8fort, aes(long,lat)) +
   geom_path(data = bbsoneroute, size = 1) +
   geom_point(data = bbsoneroute, size = 2)
 
+mapbuff <- 3000
+mapbuffx <- 3000
+mapbuffy <- 1500
 
-ggplot(huc8fort, aes(long,lat)) +
-  geom_polygon(aes(group=group, fill=id), alpha = 0.75) +
-  geom_path(aes(group=group), color = 'white') + 
-  scale_fill_manual(values = gray.colors(length(unique(huc8fort$id)))) +
-  geom_path(data = bbsoneroute, size = 1) +
-  geom_point(data = bbsoneroute, size = 2) +
-  geom_tile(data = xylo, fill='transparent', color='black') +
-  geom_tile(data = xylonlat, fill = 'transparent', color = 'red', lwd = 1) +
-  coord_fixed(ratio = 1, xlim=c(minlong-12000, maxlong+12000), ylim=c(minlat-12000, maxlat+12000)) +
-  mytheme
-
-ggsave('C:/Users/Q/Dropbox/projects/aquaxterra/hucfigures/schematic1.png', height=5, width=4, dpi=300)
-
-
-ggplot(huc12fort, aes(long,lat)) +
+panel_abc <- ggplot(huc12fort, aes(long,lat)) +
   geom_polygon(aes(group=group, fill=id), alpha = 0.5) +
   geom_path(aes(group=group), color = 'white') + 
   scale_fill_manual(values = gray.colors(length(unique(huc12fort$id)))) +
@@ -148,22 +139,138 @@ ggplot(huc12fort, aes(long,lat)) +
   geom_point(data = bbsoneroute, size = 2) +
   geom_tile(data = xylo, fill='transparent', color='black') +
   geom_tile(data = xylonlat, fill = 'transparent', color = 'slateblue3', lwd = 1) +
-  coord_fixed(ratio = 1, xlim=c(minlong-5000, maxlong+5000), ylim=c(minlat-5000, maxlat+5000)) +
+  coord_fixed(ratio = 1, xlim=c(minlong-mapbuffx, maxlong+mapbuffx), ylim=c(minlat-mapbuffy, maxlat+mapbuffy)) +
   mytheme
+
+ggsave('C:/Users/Q/Dropbox/projects/aquaxterra/hucfigures/schematic1.png', panel_abc, height=5, width=4, dpi=300)
+
+###############################
+
+# Split into 3 maps
+
+# Low res grid
+panel_a <- ggplot(huc12fort, aes(long,lat)) +
+  #geom_polygon(aes(group=group, fill=id), alpha = 0.5) +
+  #geom_path(aes(group=group), color = 'white') + 
+  #scale_fill_manual(values = gray.colors(length(unique(huc12fort$id)))) +
+  geom_path(data = bbsoneroute, size = 1) +
+  geom_point(data = bbsoneroute, size = 2) +
+  #geom_tile(data = xylo, fill='transparent', color='black') +
+  geom_tile(data = xylonlat, fill = 'transparent', color = 'slateblue3', lwd = 1) +
+  coord_fixed(ratio = 1, xlim=c(minlong-mapbuffx, maxlong+mapbuffx), ylim=c(minlat-mapbuffy, maxlat+mapbuffy)) +
+  mytheme
+
+# High res grid
+panel_b <- ggplot(huc12fort, aes(long,lat)) +
+  #geom_polygon(aes(group=group, fill=id), alpha = 0.5) +
+  #geom_path(aes(group=group), color = 'white') + 
+  #scale_fill_manual(values = gray.colors(length(unique(huc12fort$id)))) +
+  geom_path(data = bbsoneroute, size = 1) +
+  geom_point(data = bbsoneroute, size = 2) +
+  geom_tile(data = xylo, fill='transparent', color='black') +
+  #geom_tile(data = xylonlat, fill = 'transparent', color = 'slateblue3', lwd = 1) +
+  coord_fixed(ratio = 1, xlim=c(minlong-mapbuffx, maxlong+mapbuffx), ylim=c(minlat-mapbuffy, maxlat+mapbuffy)) +
+  mytheme
+
+# HUC12
+panel_c <- ggplot(huc12fort, aes(long,lat)) +
+  geom_polygon(aes(group=group, fill=id), alpha = 0.5) +
+  geom_path(aes(group=group), color = 'white') + 
+  scale_fill_manual(values = gray.colors(length(unique(huc12fort$id)))) +
+  geom_path(data = bbsoneroute, size = 1) +
+  geom_point(data = bbsoneroute, size = 2) +
+  #geom_tile(data = xylo, fill='transparent', color='black') +
+  #geom_tile(data = xylonlat, fill = 'transparent', color = 'slateblue3', lwd = 1) +
+  coord_fixed(ratio = 1, xlim=c(minlong-mapbuffx, maxlong+mapbuffx), ylim=c(minlat-mapbuffy, maxlat+mapbuffy)) +
+  mytheme
+
+fp <- 'C:/Users/Q/Google Drive/NASABiodiversityWG/Figures/schematics/'
+ggsave(file.path(fp,'schematic_abc.png'), panel_abc, height=5, width=4, dpi=400)
+ggsave(file.path(fp,'schematic_a.png'), panel_a, height=5, width=4, dpi=400)
+ggsave(file.path(fp,'schematic_b.png'), panel_b, height=5, width=4, dpi=400)
+ggsave(file.path(fp,'schematic_c.png'), panel_c, height=5, width=4, dpi=400)
+
 
 #####################################################################
 
 # Try to overlap this with a ggmap satellite image
 library(ggmap)
-bboxcoords <- data.frame(long=c(minlong-buff, maxlong+buff), lat=c(minlat-buff, maxlat+buff))
-bboxlatlong <- spTransform(SpatialPoints(bboxcoords, proj4string = CRS(aea_crs)), CRSobj = CRS(latlong_crs))
+bboxcoords <- data.frame(long=c(minlong-mapbuffx, maxlong+mapbuffx), lat=c(minlat-mapbuffy, maxlat+mapbuffy))
+bboxlatlong <- spTransform(SpatialPoints(bboxcoords, proj4string = CRS(aea_crs)), CRSobj = CRS(ll84_crs))
 bboxvec <- c(bboxlatlong@coords[1,], bboxlatlong@coords[2,])
 names(bboxvec) <- c('left','bottom','right','top')
 
-mimap <- get_map(maptype='satellite', source='google', location=bboxvec, zoom=9)
+mimap <- get_map(maptype='satellite', source='google', location=bboxvec, zoom=11)
+mimap <- get_map(source='cloudmade', location=bboxvec, zoom=12)
+
 ggmap(mimap, alpha = 0.5)
 ggmap(mimap)
 
 
 # Project everything into lat long.
-huc8latlong <- spTransform(huc8, CRSobj = CRS('+proj=longlat +datum=WGS84'))
+ll84_crs <- '+proj=longlat +datum=WGS84'
+
+huc8latlong <- spTransform(huc8, CRSobj = CRS(ll84_crs))
+huc8latlongfort <- fortify(huc8latlong, region = 'id')
+
+huc12latlong <- spTransform(SpatialPoints(huc12fort[,c('long','lat')], proj4string = CRS(aea_crs)), CRSobj = CRS(ll84_crs))
+huc12latlongfort <- cbind(huc12latlong@coords, huc12fort[,3:7])
+
+# xylosp <- SpatialPoints(coords=xylo, proj4string = CRS(aea_crs))
+# xylosp <- spTransform(xylosp, CRSobj = CRS(ll84_crs))
+# xylo2 <- as.data.frame(xylosp@coords)
+# 
+# xylonlatsp <- SpatialPoints(coords=xylonlat, proj4string = CRS(aea_crs))
+# xylonlatsp <- spTransform(xylonlatsp, CRSobj = CRS(ll84_crs))
+# xylonlat2 <- as.data.frame(xylonlatsp@coords)
+
+highreslat <- 1000/111093
+highreslon <- 1000/81541
+lowres <- 0.1
+buff <- 1
+xcoordsllhi <- seq(bboxlatlong@coords[1,1]-buff, bboxlatlong@coords[2,1]+buff, by = highreslon)
+ycoordsllhi <- seq(bboxlatlong@coords[1,2]-buff, bboxlatlong@coords[2,2]+buff, by = highreslat)
+xcoordslllo <- seq(floor(bboxlatlong@coords[1,1]-buff), ceiling(bboxlatlong@coords[2,1]+buff), by = lowres)
+ycoordslllo <-seq(floor(bboxlatlong@coords[1,2]-buff), ceiling(bboxlatlong@coords[2,2]+buff), by = lowres)
+
+xyllhi <- expand.grid(long=xcoordsllhi, lat=ycoordsllhi)
+xylllo <- expand.grid(long=xcoordslllo, lat=ycoordslllo)
+
+
+bbsonesp <- SpatialPoints(coords=bbsoneroute[,1:2], proj4string = CRS(aea_crs))
+bbsonesp <- spTransform(bbsonesp, CRSobj = CRS(ll84_crs))
+bbsoneroute2 <- as.data.frame(bbsonesp@coords)
+
+ggpanel_base <- ggmap(mimap, darken = c(0.1, 'white')) +
+  mytheme +
+  coord_map(projection='albers', parameters = c(lat0=23, lat1=29.5), xlim=bboxlatlong@coords[,1]+c(0.02,-0.01), ylim=bboxlatlong@coords[,2]+c(0,-0.01))
+
+ggpanel_abc <- ggpanel_base +
+  geom_path(data = huc12latlongfort, aes(x=long, y=lat, group=group), color = 'white') + 
+  geom_path(data = bbsoneroute2, aes(x=long, y=lat), size = 1, color = 'white') +
+  geom_point(data = bbsoneroute2, aes(x=long, y=lat), size = 2, color = 'white') +
+  geom_tile(data = xyllhi, aes(x=long, y=lat), fill='transparent', color='gray85') +
+  geom_tile(data = xylllo, aes(x=long, y=lat), fill = 'transparent', color = 'slateblue3', lwd = 1)
+
+ggpanel_a <- ggpanel_base +
+  geom_path(data = bbsoneroute2, aes(x=long, y=lat), size = 1, color = 'white') +
+  geom_point(data = bbsoneroute2, aes(x=long, y=lat), size = 2, color = 'white') +
+  geom_tile(data = xylllo, aes(x=long, y=lat), fill = 'transparent', color = 'slateblue3', lwd = 1)
+
+ggpanel_b <- ggpanel_base +
+  geom_path(data = bbsoneroute2, aes(x=long, y=lat), size = 1, color = 'white') +
+  geom_point(data = bbsoneroute2, aes(x=long, y=lat), size = 2, color = 'white') +
+  geom_tile(data = xyllhi, aes(x=long, y=lat), fill='transparent', color='gray85')
+
+ggpanel_c <- ggpanel_base +
+  geom_path(data = huc12latlongfort, aes(x=long, y=lat, group=group), color = 'white') + 
+  geom_path(data = bbsoneroute2, aes(x=long, y=lat), size = 1, color = 'white') +
+  geom_point(data = bbsoneroute2, aes(x=long, y=lat), size = 2, color = 'white') 
+
+
+fp <- 'C:/Users/Q/Google Drive/NASABiodiversityWG/Figures/schematics/'
+ggsave(file.path(fp,'schematic_satellite_abc.png'), ggpanel_abc, height=5, width=4, dpi=400)
+ggsave(file.path(fp,'schematic_satellite_a.png'), ggpanel_a, height=5, width=4, dpi=400)
+ggsave(file.path(fp,'schematic_satellite_b.png'), ggpanel_b, height=5, width=4, dpi=400)
+ggsave(file.path(fp,'schematic_satellite_c.png'), ggpanel_c, height=5, width=4, dpi=400)
+

@@ -49,3 +49,44 @@ for (i in 1:nrow(scalecounts)) {
 
 library(gridExtra)
 grid.arrange(grobs = indivcurveplots, nrow=3)
+
+
+# Bar plot
+
+pb1 <- ggplot(ldg, aes(x = LDG, fill = LDG)) + 
+  facet_wrap(~ Scale) + 
+  geom_bar(position='identity') +
+  theme_table + theme(strip.background = element_blank()) +
+  scale_y_continuous(name = 'number of studies', expand = c(0,0), limits = c(0,17)) +
+  scale_fill_brewer(type = 'qual', palette = 'Set1') +
+  xlab('latitudinal diversity gradient')
+
+# Hillebrand bar plot
+
+hilldat <- hill_a %>% filter(Realm != 'Aquatic') %>% mutate(LDG = factor(LDG, levels = c('standard','opposite','none')))
+
+pb2 <- ggplot(hilldat, aes(x = LDG, fill = LDG)) + 
+  facet_wrap(~ Realm) + 
+  geom_bar(position='identity') +
+  theme_table + theme(strip.background = element_blank()) +
+  scale_y_continuous(name = 'number of studies', expand = c(0,0), limits = c(0,225)) +
+  scale_fill_manual(values = RColorBrewer::brewer.pal(5,'Set1')[c(1,2,5)]) +
+  xlab('latitudinal diversity gradient')
+
+# Schematic function plots. Can be added as annotation to the main plot.
+curveschematics <- list()
+for (i in 1:5) {
+  
+  fx <- funlist[i][[1]]
+  theme_i <- theme_classic() + theme(axis.ticks = element_blank(), axis.text = element_blank(), axis.title = element_blank())
+  
+  curveschematics[[i]] <- ggplot(data.frame(x = c(0,1)), aes(x)) + theme_i + ylim(0,1) +
+    stat_function(geom='line', color='black', fun = fx, size = 1.5)
+}
+
+grid.arrange(grobs = curveschematics, nrow = 1)
+schems <- arrangeGrob(grobs = curveschematics, nrow = 1)
+schems2 <- arrangeGrob(grobs = curveschematics[c(1,2,5)], nrow = 1)
+
+ggsave('figs/ldg_barplot.png', pb1 + annotation_custom(grob = schems, xmin = 0.5, xmax = 5.5, ymin = 14, ymax = 16.5), height = 4, width = 9, dpi = 400)
+ggsave('figs/ldg_barplot_hillebrand.png', pb2 + annotation_custom(grob = schems2, xmin = 0.5, xmax = 3.5, ymin = 180, ymax = 220), height = 4, width = 9, dpi = 400)
