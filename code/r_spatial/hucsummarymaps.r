@@ -5,6 +5,9 @@ library(rgdal)
 library(dplyr)
 library(ggplot2)
 
+# Modification 3 Mar 2017: add state boundaries
+states <- read.csv('~/states_albers.csv', stringsAsFactors = FALSE)
+
 ### HUC4 ###
 
 # Load shape files
@@ -39,9 +42,10 @@ color_schemes <- c(3, 2, rep(2, 16), 1, 4, 6, 4, rep(5, 4))
 vars_to_plot <- names(huc4summ)[cols_to_plot]
 
 for (i in 1:length(cols_to_plot)) {
-  map_i <- ggplot(huc4_fort, aes_string(x='long', y='lat', group='group', fill=cols_to_plot[i])) +
-    geom_polygon() +
-    geom_path(color = 'white', size = 0.25) +
+  map_i <- ggplot(huc4_fort) +
+    geom_polygon(aes_string(x='long', y='lat', group='group', fill=cols_to_plot[i])) +
+    geom_path(aes_string(x='long', y='lat', group='group'), color = 'white', size = 0.25) +
+	geom_path(data = states, aes(x = long, y = lat, group = group), color = 'gray20') +
     scale_fill_gradientn(colours = colors_list[[color_schemes[i]]]) +
     coord_equal() +
     theme_bw() + 
@@ -59,9 +63,10 @@ huc8@data <- huc8@data %>% mutate(HUC8 = as.numeric(as.character(HUC8)), id = ro
 huc8_fort <- fortify(huc8, region = 'id') %>% left_join(huc8@data, by = 'id')
 
 for (i in 1:length(cols_to_plot)) {
-  map_i <- ggplot(huc8_fort, aes_string(x='long', y='lat', group='group', fill=cols_to_plot[i])) +
-    geom_polygon() +
-    geom_path(color = 'white', size = 0.25) +
+  map_i <- ggplot(huc8_fort) +
+    geom_polygon(aes_string(x='long', y='lat', group='group', fill=cols_to_plot[i])) +
+    geom_path(aes_string(x='long', y='lat', group='group'), color = 'white', size = 0.25) +
+	geom_path(data = states, aes(x = long, y = lat, group = group), color = 'gray20') +
     scale_fill_gradientn(colours = colors_list[[color_schemes[i]]]) +
     coord_equal() +
     theme_bw() + 

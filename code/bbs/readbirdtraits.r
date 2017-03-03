@@ -80,3 +80,31 @@ bbsspp[bbsspp$AOU == 6960, 15:45] <- motacillamean[1, 10:40]
 bbsspp[bbsspp$AOU == 5738, 15:45] <- artemisiospiza[1, 10:40]
 
 write.csv(bbsspp, file='/mnt/research/aquaxterra/DATA/raw_data/bird_traits/birdtraitmerged.csv', row.names=FALSE)
+
+
+# Modification 3 March 2017: add the migrant status column to the CORRECT bird trait data frame.
+
+# Fish and Wildlife's list of migratory birds
+migrants <- read.csv('DATA/raw_data/bird_traits/migratorybirds.csv', stringsAsFactors = F)
+
+# Get rid of asterisks in the Latin name strings, and spaces at the end. 
+# trim.trailing <- function (x) sub("\\s+$", "", x)
+# migrants$Latin.name <- sub('\\*', '', migrants$Latin.name)
+# migrants$Latin.name <- trim.trailing(migrants$Latin.name)
+
+migrants$Latin.name <- sub('\xa0', '', migrants$Latin.name)
+
+migrants <- subset(migrants, Latin.name != '')
+migrants$Latin.name %in% bbsspp$Latin_Name_clean
+migrants$Latin.name[!migrants$Latin.name %in% bbsspp$Latin_Name_clean]
+migrants$Latin.name[!migrants$Latin.name %in% bbsspp$Latin_Name_synonym]
+
+bbsspp$Latin_Name_clean[bbsspp$Latin_Name_clean == ''] <- NA
+bbsspp$Latin_Name_synonym[bbsspp$Latin_Name_synonym == ''] <- NA
+bbsspp$Latin_Name_synonym2[bbsspp$Latin_Name_synonym2 == ''] <- NA
+
+
+ismigrant <- bbsspp$Latin_Name_clean %in% migrants$Latin.name | bbsspp$Latin_Name_synonym %in% migrants$Latin.name | bbsspp$Latin_Name_synonym2 %in% migrants$Latin.name
+
+bbsspp$migrant_status <- ismigrant
+write.csv(bbsspp, '/mnt/research/aquaxterra/DATA/raw_data/bird_traits/birdtraitmerged.csv', row.names = FALSE)
