@@ -1,5 +1,6 @@
 # Correlation plots between BBS diversity and HUC variables.
 
+# Modified 24 Mar 2017: got rid of some of the redundant diversity variables, tweaked plot
 # Modified 14 Feb 2017: Changed from mean to median.
 
 library(dplyr)
@@ -48,8 +49,8 @@ huc4mediandat <- huc4mediandat %>% mutate(nlcd_forest = nlcd2011_43_perc + nlcd2
 # Make correlation plots for a lot of variables.
 
 td_vars <- 2:3
-fd_vars <- 4:6
-pd_vars <- 7:9
+fd_vars <- 5:6
+pd_vars <- 8:9
 clim_vars <- 28:31
 topo_vars <- 10:11
 nlcd_vars <- 36:40
@@ -57,12 +58,12 @@ prod_vars <- 32:35
 
 # Variable name labels.
 tdlabels <- c('TD: species richness', 'TD: Shannon\'s H')
-pdlabels <- c('PD: PD', 'PD: pairwise', 'PD: nearest-taxon')
+pdlabels <- c('PD: pairwise', 'PD: nearest-taxon')
 fdlabels <- c('FD: richness', 'FD: evenness', 'FD: dispersion')
 topolabels <- c('mean elevation', 'SD elevation')
 climlabels <- c('2011 temperature', '2011 temp seasonality', '2011 precip', '2011 precip seasonality')
 #nlcdlabels <- c('% mixed forest', '% grassland', '% deciduous', '% evergreen', '% open water', '% ice', '% pasture', '% crops', '% scrubland', '% developed open', '% developed low', '% developed medium', '% developed high', '% woody wetland', '% herb. wetland', '% barren')
-nlcdlabels <- c('% forest', '% agricultural', '% developed', '% wetland', '%grassland')
+nlcdlabels <- c('% forest', '% agricultural', '% developed', '% wetland', '% grassland')
 prodlabels <- c('NPP', 'GPP', 'LAI', 'fPAR')
 
 # Modified pairs plots
@@ -75,10 +76,10 @@ pairplot_bygroup <- function(dat, x, y, xlabels, ylabels, filename) {
 	
 	for (i in 1:length(y)) {
 		for (j in 1:length(x)) {
-			th <- theme_bw()
+			th <- theme_bw() + theme(panel.grid = element_blank())
 			if (i != length(y)) th <- th + theme(axis.title.x = element_blank())
 			if (j != 1) th <- th + theme(axis.title.y = element_blank())
-			plot_list[[length(plot_list) + 1]] <- ggplot(dat, aes_string(x = names(dat)[x[j]], y = names(dat)[y[i]])) + geom_point() + stat_smooth() + labs(x=xlabels[j], y=ylabels[i]) + th
+			plot_list[[length(plot_list) + 1]] <- ggplot(dat, aes_string(x = names(dat)[x[j]], y = names(dat)[y[i]])) + geom_point(alpha = 0.3) + stat_smooth() + labs(x=xlabels[j], y=ylabels[i]) + th
 			setTxtProgressBar(pb, j + length(x)*(i-1))
 		}
 	}
