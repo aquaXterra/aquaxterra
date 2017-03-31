@@ -1,4 +1,5 @@
 # Maps of biophysical variables, by different HUC levels
+# Modified 30 March 2017: new layers.
 
 library(maptools)
 library(rgdal)
@@ -8,21 +9,16 @@ library(ggplot2)
 # Modification 3 Mar 2017: add state boundaries
 states <- read.csv('~/states_albers.csv', stringsAsFactors = FALSE)
 
+# Load huc4 and huc8 summaries
+source('~/code/loadhuc48summ.r')
+
 ### HUC4 ###
 
 # Load shape files
 huc4 <- readOGR(dsn = '/mnt/research/aquaxterra/DATA/reprojected_data/HUC', layer = 'HU4_CONUS_Alb')
 
-# Load summary CSV files
-huc4summ <- read.csv('/mnt/research/aquaxterra/CODE/python/RasterOverlay/HUC4summarized.csv', stringsAsFactors = FALSE)
-
-
 # Select variables to plot.
-cols_to_plot <- names(huc4summ)[c(3,5,391:410,601,604,612,615,623:626)]
-
-# Note that some nlcd classes are Alaska only and thus all NA. Get rid of them.
-cols_alaskaonly <- grep('72|73|74|51', names(huc4summ), value = TRUE)
-cols_to_plot <- cols_to_plot[!cols_to_plot %in% cols_alaskaonly]
+cols_to_plot <- c('mean_altitude','std_altitude','mean_allyears_npp','mean_allyears_gpp','mean_allyears_lai','mean_allyears_fpar','mean_allyears_bio1','mean_allyears_bio4','cv_allyears_bio1','mean_allyears_bio12','mean_allyears_bio15','cv_allyears_bio12','nlcd_forest','nlcd_agriculture','nlcd_developed','nlcd_wetland','nlcd_grassland','nlcd_shrubland','nlcd_ice','nlcd_barren','nlcd_water','nlcd_diversity')
 
 # Merge the summary CSV data with HUC4. The HUC4 must be converted to numeric for both.
 huc4@data <- huc4@data %>% mutate(HUC4 = as.numeric(as.character(HUC4)), id = rownames(huc4@data)) %>% left_join(huc4summ[,c('HUC4',cols_to_plot)])
@@ -37,9 +33,7 @@ browntogreencolors <- c('#8c510a','#bf812d','#dfc27d','#f6e8c3','#f5f5f5','#c7ea
 browntobluecolors <- colorRampPalette(c('tan','skyblue'))(9)
 
 colors_list <- list(rbcolors, purple8colors, elevcolors, yellowtogreencolors, browntogreencolors, browntobluecolors)
-color_schemes <- c(3, 2, rep(2, 16), 1, 4, 6, 4, rep(5, 4))
-
-vars_to_plot <- names(huc4summ)[cols_to_plot]
+color_schemes <- c(3, 2, rep(5,4), 1, 4, 4, 6, 4, 4, rep(5, 10))
 
 for (i in 1:length(cols_to_plot)) {
   map_i <- ggplot(huc4_fort) +
@@ -57,7 +51,6 @@ for (i in 1:length(cols_to_plot)) {
 ### HUC8 ###
 
 huc8 <- readOGR(dsn = '/mnt/research/aquaxterra/DATA/reprojected_data/HUC', layer = 'HU8_CONUS_Alb')
-huc8summ <- read.csv('/mnt/research/aquaxterra/CODE/python/RasterOverlay/HUC8summarized.csv', stringsAsFactors = FALSE)
 
 huc8@data <- huc8@data %>% mutate(HUC8 = as.numeric(as.character(HUC8)), id = rownames(huc8@data)) %>% left_join(huc8summ[,c('HUC8',cols_to_plot)])
 huc8_fort <- fortify(huc8, region = 'id') %>% left_join(huc8@data, by = 'id')
