@@ -204,12 +204,12 @@ divmedians8 <- bbs_div_byroute %>%
     left_join(fgrichness) %>%
 	filter(nstops8 > 25, year >= 2001, year <= 2011) %>% # Use only the ones that are a majority in one huc8
 	group_by(rteNo, HUC8) %>%
-	summarize_at(vars(richness, FRic, FEve, FDis, PD, mpd.obs.z, mntd.obs.z), median)
+	summarize_at(vars(starts_with('total_richness')), median)
 divmedians8res <- bbs_div_byrouteres %>%
 	left_join(fgrichness) %>%
 	filter(nstops8 > 25, year >= 2001, year <= 2011) %>% # Use only the ones that are a majority in one huc8
 	group_by(rteNo, HUC8) %>%
-	summarize_at(vars(richness, FRic, FEve, FDis, PD, mpd.obs.z, mntd.obs.z), median)
+	summarize_at(vars(starts_with('resident_richness')), median)
 
 
 # Merge bird diversity means to HUC8.
