@@ -88,20 +88,38 @@ p1_colors <- ggplot() +
 
 ggsave('C:/Users/Q/Google Drive/aquaxterra_watercube_all/Maps_and_figs/nestedmap_colors.png', p1_colors, height=6, width=6, dpi=300)
 
-
-
-
 ###############################
-# Map with nested lines and a satellite image to look cooler
+# Make a satellite image and then put the other map as an inset
 
+library(ggmap)
 aea_crs <- '+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0'
 ll84_crs <- '+proj=longlat +datum=WGS84'
 
-library(ggmap)
-bboxcoords <- data.frame(long=c(minlong, maxlong), lat=c(minlat, maxlat))
-bboxlatlong <- spTransform(SpatialPoints(bboxcoords, proj4string = CRS(aea_crs)), CRSobj = CRS(ll84_crs))
+bboxlatlong <- SpatialPoints(data.frame(long=c(-90,-80), lat=c(41,46)))
 bboxvec <- c(bboxlatlong@coords[1,], bboxlatlong@coords[2,])
 names(bboxvec) <- c('left','bottom','right','top')
 
-mimap <- get_map(maptype='satellite', source='google', location=bboxvec, zoom=11)
+mimap <- get_map(maptype='satellite', source='google', location=bboxvec, zoom=7)
 
+smallbox <- SpatialPoints(data.frame(long=c(minlong,maxlong), lat=c(minlat,maxlat)), proj4string = CRS(aea_crs))
+huc4pts <- SpatialPoints(cbind(huc4fort$long,huc4fort$lat), proj4string = CRS(aea_crs))
+huc4pts_ll <- spTransform(huc4pts, CRSobj = CRS(ll84_crs))
+huc4fort_ll <- transform(huc4fort, long = huc4pts_ll@coords[,1], lat = huc4pts_ll@coords[,2])
+huc8pts <- SpatialPoints(cbind(huc8fort$long,huc8fort$lat), proj4string = CRS(aea_crs))
+huc8pts_ll <- spTransform(huc8pts, CRSobj = CRS(ll84_crs))
+huc8fort_ll <- transform(huc8fort, long = huc8pts_ll@coords[,1], lat = huc8pts_ll@coords[,2])
+
+smallbox_ll <- spTransform(smallbox, CRSobj=CRS(ll84_crs))
+smallbox_df <- data.frame(xmin=smallbox_ll@coords[1,1],
+                          xmax=smallbox_ll@coords[2,1],
+                          ymin=smallbox_ll@coords[1,2],
+                          ymax=smallbox_ll@coords[2,2])
+
+p_mimap <- ggmap(mimap) + 
+  geom_path(data=huc4fort_ll, aes(x=long,y=lat, group=group), color='white', size = 0.6) +
+  geom_path(data=huc8fort_ll, aes(x=long,y=lat,group=group), color='white', size=0.2) +
+  geom_rect(data=smallbox_df, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),
+            color='goldenrod',fill='transparent',size=1,inherit.aes = F) +
+  theme(axis.title = element_blank(), axis.text=element_blank(), axis.ticks=element_blank())
+
+ggsave('C:/Users/Q/Google Drive/aquaxterra_watercube_all/Maps_and_figs/mimaphucs.png', p_mimap, height=6, width=6, dpi=300)
