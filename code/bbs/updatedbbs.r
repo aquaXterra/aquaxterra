@@ -1,6 +1,7 @@
 # combine most recent bbs data into a single csv. Use to generate new bbsmat.
+# Update 26 May 2017: new data that goes up to 2016
 
-fp <- '/mnt/research/aquaxterra/DATA/raw_data/BBS/DataFiles/50-StopData/1997ToPresent_SurveyWide'
+fp <- '/mnt/research/aquaxterra/DATA/raw_data/BBS/DataFiles26may2017/50-StopData/1997ToPresent_SurveyWide'
 
 bbsdf <- list()
 
@@ -46,5 +47,5 @@ bbsgrps_byroute <- select(bbsmat_byroute, year, rteNo)
 bbsmat_byroute <- bbsmat_byroute$s
 bbsmat_byroute <- do.call('rbind', bbsmat_byroute)
 
-save(bbsmat, bbsgrps, bbsmat_byroute, bbsgrps_byroute, sppids, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmat2015.r')
+save(bbsmat, bbsgrps, bbsmat_byroute, bbsgrps_byroute, sppids, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsmat2016.r')
 
