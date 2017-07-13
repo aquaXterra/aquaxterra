@@ -7,7 +7,7 @@ library(dplyr)
 
 
 # Load summary CSV files
-huc4summ <- read.csv('/mnt/research/aquaxterra/CODE/python/RasterOverlay/HUC4summarized.csv', stringsAsFactors = FALSE)
+huc4summ <- read.csv('W:/CODE/python/RasterOverlay/HUC4summarized.csv', stringsAsFactors = FALSE)
 
 # Add new climate variables (means and interannual CVs)
 mns <- list()
@@ -216,3 +216,73 @@ watershed_summary_data <- watershed_summary_data %>%
 # Save data
 write.csv(watershed_summary_data, file = file.path(fp, 'raw_data/insects/spider_summary_data.csv'), row.names = FALSE)
 write.csv(spider_mat, file = file.path(fp, 'raw_data/insects/spider_species_by_watershed.csv'), row.names = TRUE)
+
+
+
+# 13 July: combine with functional information ----------------------------
+
+spider_summ <- read.csv('W:/DATA/raw_data/insects/spider_summary_data.csv', stringsAsFactors = FALSE)
+spider_mat <- read.csv('W:/DATA/raw_data/insects/spider_species_by_watershed.csv', stringsAsFactors = FALSE)
+
+spider_families <- read.csv('C:/Users/Q/google_drive/SROP2017/spider_database_jul13.csv', stringsAsFactors = FALSE)
+
+library(dplyr)
+
+# Get rid of trailing spaces in spider genus
+spider_families <- mutate(spider_families, Genus = gsub('\\ ', '', Genus), Family = gsub('\\ ', '', Family))
+spider_families$Web.Type[spider_families$Web.Type=='Orb Webs'] <- 'Orb Web'
+
+# Get trait information by family and riparian status
+spider_fam_traits <- spider_families %>%
+  group_by(Family) %>%
+  summarize(riparian = any(grepl('Aquatic|Riparian|Possibly', Aquatic.Riparian)) | any(grepl('Mesic|Wet', Habitat.Type)),
+            web_type = names(table(Web.Type))[which.max(table(Web.Type))],
+            foraging_strat = names(table(Foraging.Strategy))[which.max(table(Foraging.Strategy))])
+
+table(spider_fam_traits$riparian) # 17 families listed as riparian.
+
+# Clean the spider_mat species name.
+names(spider_mat)[1] <- 'Species'
+spider_mat_genus <- gsub('\\ .*', '', spider_mat$Species) # get genus
+
+# Get family for each spider genus
+genus_lookuptable <- spider_families %>%
+  group_by(Genus) %>%
+  summarize(Family = names(table(Family))[which.max(table(Family))])
+
+library(reshape2)
+
+spider_mat_long <- spider_mat %>%
+  mutate(Genus = spider_mat_genus) %>%
+  left_join(genus_lookuptable) %>%
+  melt(id.vars = c('Family','Genus','Species'), variable.name = 'HUC4', value.name = 'present') %>%
+  mutate(HUC4 = as.numeric(substr(as.character(HUC4), 2, nchar(as.character(HUC4))))) %>%
+  left_join(spider_fam_traits)
+
+# there are too few riparian to split them off.
+spider_huc_traits <- spider_mat_long %>%
+  group_by(HUC4) %>%
+  summarize(riparian_orbweb_richness = sum(present & riparian & web_type == 'Orb Web', na.rm=T),
+            riparian_tangledweb_richness = sum(present[which(riparian & web_type == 'Tangled Web')]),
+            riparian_noweb_richness = sum(present[which(riparian & web_type == 'None')]),
+            riparian_diurnal_richness = sum(present[which(riparian & foraging_strat == 'Diurnal')]),
+            riparian_nocturnal_richness = sum(present[which(riparian & foraging_strat == 'Nocturnal')]),
+            orbweb_richness = sum(present[which(web_type == 'Orb Web')]))
+  
+spider_huc_traits <- spider_mat_long %>%
+  group_by(HUC4) %>%
+  summarize(orbweb_richness = sum(present & web_type == 'Orb Web', na.rm = TRUE),
+            tangledweb_richness = sum(present & web_type == 'Tangled Web', na.rm = TRUE),
+            noweb_richness = sum(present & web_type == 'None', na.rm = TRUE),
+            web_type_diversity = length(unique(web_type[present & grepl('Web',web_type)])),
+            riparian_spider_richness = sum(present & riparian, na.rm=TRUE),
+            active_predator_richness = sum(present & foraging_strat == 'Active', na.rm = TRUE),
+            sitandwait_predator_richness = sum(present & foraging_strat == 'Sit and Wait', na.rm = TRUE))
+
+spider_huc_traits_less <- spider_huc_traits %>%
+  rename(watershed = HUC4) %>%
+  select(watershed, orbweb_richness, web_type_diversity, riparian_spider_richness, active_predator_richness, sitandwait_predator_richness)
+
+spider_summ <- left_join(spider_summ, spider_huc_traits_less)
+write.csv(spider_summ, file = 'W:/DATA/raw_data/insects/spider_summary_data.csv', row.names = FALSE)
+write.csv(spider_summ, file = 'C:/Users/Q/google_drive/SROP2017/Spiders/raw_data/spider_summary_data.csv', row.names = FALSE)
