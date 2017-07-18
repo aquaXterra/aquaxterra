@@ -220,6 +220,7 @@ write.csv(spider_mat, file = file.path(fp, 'raw_data/insects/spider_species_by_w
 
 
 # 13 July: combine with functional information ----------------------------
+# Corrected on 17 July: some of the results are missing.
 
 spider_summ <- read.csv('W:/DATA/raw_data/insects/spider_summary_data.csv', stringsAsFactors = FALSE)
 spider_mat <- read.csv('W:/DATA/raw_data/insects/spider_species_by_watershed.csv', stringsAsFactors = FALSE)
@@ -233,11 +234,21 @@ spider_families <- mutate(spider_families, Genus = gsub('\\ ', '', Genus), Famil
 spider_families$Web.Type[spider_families$Web.Type=='Orb Webs'] <- 'Orb Web'
 
 # Get trait information by family and riparian status
+# Get rid of the blank ones
+
+trait_summary <- function(x) {
+  webtypes <- x$Web.Type[x$Web.Type != '']
+  strats <- x$Foraging.Strategy[x$Foraging.Strategy != '']
+  webtype <- if (length(webtypes) > 0) names(table(webtypes))[which.max(table(webtypes))] else NA
+  forstrat <- if (length(strats) > 0) names(table(strats))[which.max(table(strats))] else NA
+  riparian <- any(grepl('Aquatic|Riparian|Possibly', x$Aquatic.Riparian)) | any(grepl('Mesic|Wet', x$Habitat.Type))
+  data.frame(riparian = riparian, web_type = webtype, foraging_strat = forstrat)
+}
+
 spider_fam_traits <- spider_families %>%
   group_by(Family) %>%
-  summarize(riparian = any(grepl('Aquatic|Riparian|Possibly', Aquatic.Riparian)) | any(grepl('Mesic|Wet', Habitat.Type)),
-            web_type = names(table(Web.Type))[which.max(table(Web.Type))],
-            foraging_strat = names(table(Foraging.Strategy))[which.max(table(Foraging.Strategy))])
+  do(trait_summary(.))
+
 
 table(spider_fam_traits$riparian) # 17 families listed as riparian.
 
@@ -271,17 +282,17 @@ spider_huc_traits <- spider_mat_long %>%
   
 spider_huc_traits <- spider_mat_long %>%
   group_by(HUC4) %>%
-  summarize(orbweb_richness = sum(present & web_type == 'Orb Web', na.rm = TRUE),
-            tangledweb_richness = sum(present & web_type == 'Tangled Web', na.rm = TRUE),
-            noweb_richness = sum(present & web_type == 'None', na.rm = TRUE),
+  summarize(orbweb_richness = sum(present & riparian & web_type == 'Orb Web', na.rm = TRUE),
+            sheetweb_richness = sum(present & riparian & web_type == 'Tangled Web', na.rm = TRUE),
+            noweb_richness = sum(present & riparian & grepl('Sheet', web_type), na.rm = TRUE),
             web_type_diversity = length(unique(web_type[present & grepl('Web',web_type)])),
             riparian_spider_richness = sum(present & riparian, na.rm=TRUE),
-            active_predator_richness = sum(present & foraging_strat == 'Active', na.rm = TRUE),
-            sitandwait_predator_richness = sum(present & foraging_strat == 'Sit and Wait', na.rm = TRUE))
+            active_predator_richness = sum(present & riparian & foraging_strat == 'Active', na.rm = TRUE),
+            sitandwait_predator_richness = sum(present & riparian & foraging_strat == 'Sit and Wait', na.rm = TRUE))
 
 spider_huc_traits_less <- spider_huc_traits %>%
   rename(watershed = HUC4) %>%
-  select(watershed, orbweb_richness, web_type_diversity, riparian_spider_richness, active_predator_richness, sitandwait_predator_richness)
+  select(watershed, orbweb_richness, sheetweb_richness, web_type_diversity, riparian_spider_richness, active_predator_richness, sitandwait_predator_richness)
 
 spider_summ <- left_join(spider_summ, spider_huc_traits_less)
 write.csv(spider_summ, file = 'W:/DATA/raw_data/insects/spider_summary_data.csv', row.names = FALSE)
