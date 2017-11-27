@@ -1,4 +1,5 @@
 # Maps of biophysical variables, by different HUC levels
+# Modified 27 November 2017: add HUC12 to this.
 # Modified 30 March 2017: new layers.
 
 library(maptools)
@@ -65,5 +66,27 @@ for (i in 1:length(cols_to_plot)) {
     theme_bw() + 
     theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(), panel.grid = element_blank(), panel.background = element_rect(color = 'black', fill = 'black'), panel.border = element_blank(), plot.background = element_rect(fill = 'black'), legend.position = c(0.13,0.1), legend.direction = 'horizontal', legend.title = element_blank())
   ggsave(filename = paste0('/mnt/research/aquaxterra/FIGS/huc8maps/huc8_summary_', cols_to_plot[i], '_map.png'), plot = map_i, height = 6, width = 9, dpi = 400)
+  print(i)
+}
+
+### HUC12 ###
+
+huc12 <- readOGR(dsn = '/mnt/research/aquaxterra/DATA/reprojected_data/HUC', layer = 'HU12_CONUS_Alb')
+huc12summ <- read.csv('/mnt/research/aquaxterra/DATA/huc12summarized_reduced.csv', stringsAsFactors = FALSE)
+
+huc12@data <- huc12@data %>% mutate(HUC12 = as.numeric(as.character(HUC12)), id = rownames(huc12@data)) %>% left_join(huc12summ[,c('HUC12',cols_to_plot)])
+huc12_fort <- fortify(huc12, region = 'id') %>% left_join(huc12@data, by = 'id')
+save(huc12_fort, file = '/mnt/research/aquaxterra/DATA/huc12_fortified.r')
+
+for (i in 1:length(cols_to_plot)) {
+  map_i <- ggplot(huc12_fort) +
+    geom_polygon(aes_string(x='long', y='lat', group='group', fill=cols_to_plot[i])) +
+    #geom_path(aes_string(x='long', y='lat', group='group'), color = 'white', size = 0.25) + # Remove this since it will be impossible to see on huc12
+	geom_path(data = states, aes(x = long, y = lat, group = group), color = 'gray20') +
+    scale_fill_gradientn(colours = colors_list[[color_schemes[i]]]) +
+    coord_equal() +
+    theme_bw() + 
+    theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(), panel.grid = element_blank(), panel.background = element_rect(color = 'black', fill = 'black'), panel.border = element_blank(), plot.background = element_rect(fill = 'black'), legend.position = c(0.13,0.1), legend.direction = 'horizontal', legend.title = element_blank())
+  ggsave(filename = paste0('/mnt/research/aquaxterra/FIGS/huc12maps/huc12_summary_', cols_to_plot[i], '_map.png'), plot = map_i, height = 6, width = 9, dpi = 400)
   print(i)
 }
