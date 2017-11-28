@@ -39,7 +39,14 @@ huc4summ <- huc4summ %>% mutate(nlcd_forest = nlcd2011_43_perc + nlcd2011_41_per
 							  nlcd_ice = nlcd2011_12_perc,
 							  nlcd_barren = nlcd2011_31_perc,
 							  nlcd_water = nlcd2011_11_perc,
-							  nlcd_diversity = vegan::diversity(cbind(nlcd_forest, nlcd_agriculture, nlcd_developed, nlcd_wetland, nlcd_grassland, nlcd_shrubland, nlcd_ice, nlcd_barren, nlcd_water)))							  
+							  nlcd_diversity = vegan::diversity(cbind(nlcd_forest, nlcd_agriculture, nlcd_developed, nlcd_wetland, nlcd_grassland, nlcd_shrubland, nlcd_ice, nlcd_barren, nlcd_water)))	
+
+# Select variables to plot.
+cols_to_plot <- c('mean_altitude','std_altitude','mean_allyears_npp','mean_allyears_gpp','mean_allyears_lai','mean_allyears_fpar','mean_allyears_bio1','mean_allyears_bio4','cv_allyears_bio1','mean_allyears_bio12','mean_allyears_bio15','cv_allyears_bio12','nlcd_forest','nlcd_agriculture','nlcd_developed','nlcd_wetland','nlcd_grassland','nlcd_shrubland','nlcd_ice','nlcd_barren','nlcd_water','nlcd_diversity')
+
+huc4summ_reduced <- huc4summ[,c('HUC4', cols_to_plot)]
+write.csv(huc4summ_reduced, file = '/mnt/research/aquaxterra/DATA/huc4summarized_reduced.csv', row.names = FALSE)
+
 ### HUC8 ###
 
 huc8summ <- read.csv('/mnt/research/aquaxterra/CODE/python/RasterOverlay/HUC8summarized.csv', stringsAsFactors = FALSE)
@@ -78,7 +85,12 @@ huc8summ <- huc8summ %>% mutate(nlcd_forest = nlcd2011_43_perc + nlcd2011_41_per
 							  nlcd_ice = nlcd2011_12_perc,
 							  nlcd_barren = nlcd2011_31_perc,
 							  nlcd_water = nlcd2011_11_perc,
-							  nlcd_diversity = vegan::diversity(cbind(nlcd_forest, nlcd_agriculture, nlcd_developed, nlcd_wetland, nlcd_grassland, nlcd_shrubland, nlcd_ice, nlcd_barren, nlcd_water)))							  
+							  nlcd_diversity = vegan::diversity(cbind(nlcd_forest, nlcd_agriculture, nlcd_developed, nlcd_wetland, nlcd_grassland, nlcd_shrubland, nlcd_ice, nlcd_barren, nlcd_water)))	
+
+huc8summ_reduced <- huc8summ[,c('HUC8', cols_to_plot)]
+write.csv(huc8summ_reduced, file = '/mnt/research/aquaxterra/DATA/huc8summarized_reduced.csv', row.names = FALSE)
+
+
 ### HUC12 ###
 
 huc12summ <- read.csv('/mnt/research/aquaxterra/CODE/python/RasterOverlay/HUC12summarized.csv', stringsAsFactors = FALSE)
