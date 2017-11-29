@@ -2,6 +2,8 @@
 # PD, FD, and TD
 # Do this for all birds, and for resident birds only.
 
+# Modified 29 Nov 2017: added huc12 summaries; did both majority-rule summary and averaging any route that has any stops in each watershed.
+
 ### ALL BIRDS ###
 
 # Average the PD metrics from the 10 different trees.
@@ -148,6 +150,10 @@ huclist <- bbs_huc %>% group_by(rteNo) %>% do(HUC4list = unique(.$HUC4), HUC8lis
 bbs_div_byroute <- left_join(bbs_div_byroute, huctable) %>% left_join(huclist)
 bbs_div_byrouteres <- left_join(bbs_div_byrouteres, huctable) %>% left_join(huclist)
 
+# Edit 29 Nov.: Try to join all the hucs so that the bbs data are replicated across rows.
+bbs_div_allhucs <- left_join(bbs_huc, bbs_div_byroute)
+bbs_div_allhucsres <- left_join(bbs_huc, bbs_div_byrouteres)
+
 # Load the bbs stop locations.
 
 library(rgdal)
@@ -166,3 +172,14 @@ bbs_div_byrouteres <- arrange(bbs_div_byrouteres, year, rteNo)
 
 
 save(bbs_div_byroute, bbs_div_byrouteres, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_div_byroute_presence.r')
+
+bbs_div_allhucs <- bbs_div_allhucs %>%
+  mutate(rteNo = as.numeric(rteNo)) %>%
+  left_join(rtelatlongs) %>%
+  arrange(year, rteNo)
+bbs_div_allhucsres <- bbs_div_allhucsres %>%
+  mutate(rteNo = as.numeric(rteNo)) %>%
+  left_join(rtelatlongs) %>%
+  arrange(year, rteNo)
+
+save(bbs_div_allhucs, bbs_div_allhucsres, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_div_byroute_presence_allhucs.r')
