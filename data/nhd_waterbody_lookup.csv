@@ -1,0 +1,39 @@
+Feature Type,FCode,Description,category,include,subcategory,permanence
+ESTUARY,49300,feature type only: no attributes,natural,yes,estuary,perennial
+ICE MASS,37800,feature type only: no attributes,natural,no,,
+LAKE/POND,39000,feature type only: no attributes,natural,yes,lake,unknown
+LAKE/POND,39001,Hydrographic Category|intermittent,natural,yes,lake,intermittent
+LAKE/POND,39004,Hydrographic Category|perennial,natural,yes,lake,perennial
+LAKE/POND,39005,Hydrographic Category|intermittent; Stage|high water elevation,natural,yes,lake,intermittent
+LAKE/POND,39006,Hydrographic Category|intermittent; Stage|date of photography,natural,yes,lake,intermittent
+LAKE/POND,39009,Hydrographic Category|perennial; Stage|average water elevation,natural,yes,lake,perennial
+LAKE/POND,39010,Hydrographic Category|perennial; Stage|normal pool,natural,yes,lake,perennial
+LAKE/POND,39011,Hydrographic Category|perennial; Stage|date of photography,natural,yes,lake,perennial
+LAKE/POND,39012,Hydrographic Category|perennial; Stage|spillway elevation,natural,yes,lake,perennial
+PLAYA,36100,feature type only: no attributes,natural,no,,
+RESERVOIR,43600,feature type only: no attributes,manmade,yes,reservoir,unknown
+RESERVOIR,43601,Reservoir Type|aquaculture,manmade,no,,
+RESERVOIR,43603,Reservoir Type|decorative pool,manmade,no,,
+RESERVOIR,43604,Reservoir Type|disposal-tailings pond; Construction Material|earthen,manmade,no,,
+RESERVOIR,43605,Reservoir Type|disposal-tailings pond,manmade,no,,
+RESERVOIR,43606,Reservoir Type|disposal-unspecified,manmade,no,,
+RESERVOIR,43607,Reservoir Type|evaporator,manmade,no,,
+RESERVOIR,43608,Reservoir Type|swimming pool,manmade,no,,
+RESERVOIR,43609,Reservoir Type|treatment-cooling pond,manmade,no,,
+RESERVOIR,43610,Reservoir Type|treatment-filtration pond,manmade,no,,
+RESERVOIR,43611,Reservoir Type|treatment-settling pond,manmade,no,,
+RESERVOIR,43612,Reservoir Type|treatment-sewage treatment pond,manmade,no,,
+RESERVOIR,43613,Reservoir Type|water storage; Construction Material|nonearthen,manmade,yes,reservoir,unknown
+RESERVOIR,43614,Reservoir Type|water storage; Construction Material|earthen; Hydrographic Category|intermittent,manmade,yes,reservoir,intermittent
+RESERVOIR,43615,Reservoir Type|water storage; Construction Material|earthen; Hydrographic Category|perennial,manmade,yes,reservoir,perennial
+RESERVOIR,43617,Reservoir Type|water storage,manmade,yes,reservoir,unknown
+RESERVOIR,43618,Reservoir Type|unspecified; Construction Material|earthen,manmade,no,,
+RESERVOIR,43619,Reservoir Type|unspecified; Construction Material|nonearthen,manmade,no,,
+RESERVOIR,43621,Reservoir Type|water storage; Hydrographic category|perennial,manmade,yes,reservoir,perennial
+RESERVOIR,43623,Reservoir Type|evaporator; Construction Material|earthen,manmade,no,,
+RESERVOIR,43624,Reservoir Type|treatment,manmade,no,,
+RESERVOIR,43625,Reservoir Type|disposal,manmade,no,,
+RESERVOIR,43626,Reservoir Type|disposal; Construction Material|nonearthen,manmade,no,,
+SWAMP/MARSH,46600,feature type only: no attributes,natural,no,swamp,unknown
+SWAMP/MARSH,46601,Hydrographic category|intermittent,natural,no,swamp,intermittent
+SWAMP/MARSH,46602,Hydrographic category|perennial,natural,no,swamp,perennial

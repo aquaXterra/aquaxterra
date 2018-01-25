@@ -1,0 +1,32 @@
+Feature Type,FCode,Description,category,include,subcategory,permanence
+ARTIFICIAL PATH,55800,feature type only: no attributes,manmade,no,,
+CANAL/DITCH,33600,feature type only: no attributes,manmade,yes,canal,unknown
+CANAL/DITCH,33601,Canal/Ditch Type|aqueduct,manmade,yes,canal,unknown
+CANAL/DITCH,33603,Canal/Ditch Type|stormwater,manmade,yes,canal,intermittent
+COASTLINE,56600,feature type only: no attributes,natural,no,,
+CONNECTOR,33400,feature type only: no attributes,manmade,no,,
+PIPELINE,42800,feature type only: no attributes,manmade,yes,pipeline,unknown
+PIPELINE,42801,Product|water; Pipeline Type|aqueduct; Relationship to Surface|at or near,manmade,yes,pipeline,unknown
+PIPELINE,42802,Product|water; Pipeline Type|aqueduct; Relationship to Surface|elevated,manmade,yes,pipeline,unknown
+PIPELINE,42803,Product|water; Pipeline Type|aqueduct; Relationship to Surface|underground,manmade,yes,pipeline,unknown
+PIPELINE,42804,Product|water; Pipeline Type|aqueduct; Relationship to Surface|underwater,manmade,yes,pipeline,unknown
+PIPELINE,42805,Product|water; Pipeline Type|general case; Relationship to Surface|at or near,manmade,yes,pipeline,unknown
+PIPELINE,42806,Product|water; Pipeline Type|general case; Relationship to Surface|elevated,manmade,yes,pipeline,unknown
+PIPELINE,42807,Product|water; Pipeline Type|general case; Relationship to Surface|underground,manmade,yes,pipeline,unknown
+PIPELINE,42808,Product|water; Pipeline Type|general case; Relationship to Surface|underwater,manmade,yes,pipeline,unknown
+PIPELINE,42809,Product|water; Pipeline Type|penstock; Relationship to Surface|at or near,manmade,yes,pipeline,unknown
+PIPELINE,42810,Product|water; Pipeline Type|penstock; Relationship to Surface|elevated,manmade,yes,pipeline,unknown
+PIPELINE,42811,Product|water; Pipeline Type|penstock; Relationship to Surface|underground,manmade,yes,pipeline,unknown
+PIPELINE,42812,Product|water; Pipeline Type|penstock; Relationship to Surface|underwater,manmade,yes,pipeline,unknown
+PIPELINE,42813,Product|water; Pipeline Type|siphon; Relationship to Surface|unspecified,manmade,yes,pipeline,unknown
+PIPELINE,42814,Product|water; Pipeline Type|general case,manmade,yes,pipeline,unknown
+PIPELINE,42815,Product|water; Pipeline Type|penstock,manmade,yes,pipeline,unknown
+PIPELINE,42816,Product|water; Pipeline Type|aqueduct,manmade,yes,pipeline,unknown
+STREAM/RIVER,46000,feature type only: no attributes,natural,yes,stream,unknown
+STREAM/RIVER,46003,Hydrographic Category|intermittent,natural,yes,stream,intermittent
+STREAM/RIVER,46006,Hydrographic Category|perennial,natural,yes,stream,perennial
+STREAM/RIVER,46007,Hydrographic Category|ephemeral,natural,yes,stream,ephemeral
+UNDERGROUND CONDUIT,42000,feature type only: no attributes,natural,yes,underground,unknown
+UNDERGROUND CONDUIT,42001,Positional Accuracy|definite,natural,yes,underground,unknown
+UNDERGROUND CONDUIT,42002,Positional Accuracy|indefinite,natural,yes,underground,unknown
+UNDERGROUND CONDUIT,42003,Positional Accuracy|appoximate,natural,yes,underground,unknown
