@@ -1,4 +1,4 @@
-qsub nhdhuc.sh -N lake8 -v watertype=lake,huclevel=huc8 -t 1-223
-qsub nhdhuc.sh -N river8 -v watertype=river,huclevel=huc8 -t 1-223
-qsub nhdhuc.sh -N lake12 -v watertype=lake,huclevel=huc12 -t 1-223
-qsub nhdhuc.sh -N river12 -v watertype=river,huclevel=huc12 -t 1-223
+qsub nhdhuc.sh -N lake8 -v watertype=lake,huclevel=huc8 -l mem=4gb -t 1-223
+qsub nhdhuc.sh -N river8 -v watertype=river,huclevel=huc8 -l mem=4gb -t 1-223
+qsub nhdhuc.sh -N lake12 -v watertype=lake,huclevel=huc12 -l mem=4gb -t 1-223
+qsub nhdhuc.sh -N river12 -v watertype=river,huclevel=huc12 -l mem=4gb -t 1-223
