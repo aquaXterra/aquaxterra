@@ -65,10 +65,13 @@ close(pb)
 
 save(lake_summary, river_summary, file = '/mnt/research/aquaxterra/DATA/reprojected_data/NHD/HUC4_summaries.r')
 
-# huc4id <- sapply(strsplit(alldirs, '_'), '[', 3)
+######
+# Compile output.
+load('HUC4_summaries.r')
+huc4id <- sapply(strsplit(alldirs, '_'), '[', 3)
 
-# lake_summary <- cbind(HUC4 = rep(huc4id, sapply(lake_summary, nrow)), do.call('rbind', lake_summary))
-# river_summary <- cbind(HUC4 = rep(huc4id, sapply(river_summary, nrow)), do.call('rbind', river_summary))
+lake_summary <- cbind(HUC4 = rep(huc4id, sapply(lake_summary, nrow)), do.call('rbind', lake_summary))
+river_summary <- cbind(HUC4 = rep(huc4id, sapply(river_summary, nrow)), do.call('rbind', river_summary))
 
-# write.csv(lake_summary, '/mnt/research/aquaxterra/DATA/reprojected_data/NHD/HUC4_lake_areas.csv', row.names = FALSE)
-# write.csv(river_summary, '/mnt/research/aquaxterra/DATA/reprojected_data/NHD/HUC4_river_lengths.csv', row.names = FALSE)
+write.csv(lake_summary, '/mnt/research/aquaxterra/DATA/reprojected_data/NHD/HUC4_lake_areas.csv', row.names = FALSE)
+write.csv(river_summary, '/mnt/research/aquaxterra/DATA/reprojected_data/NHD/HUC4_river_lengths.csv', row.names = FALSE)
