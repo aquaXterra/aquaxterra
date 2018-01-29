@@ -45,6 +45,7 @@ for (i in 1:length(huc)) {
   nhd_huc_intersect[[i]] <- gIntersection(nhd, huc[i,], byid = TRUE, drop_lower_td = TRUE)
 }
 
+nhd_aea <- list()
 nhd_size <- list()
 
 # Project to equal area so we can calculate length or area
@@ -58,9 +59,9 @@ for (i in 1:length(huc)) {
   } else {
 	# Calculate length or area
 	if (watertype == 'lake') {
-	  nhd_size <- lapply(nhd_aea, gArea, byid = TRUE)
+	  nhd_size[[i]] <- gArea(nhd_aea[[i]], byid = TRUE)
 	} else {
-	  nhd_size <- lapply(nhd_aea, gLength, byid = TRUE)
+	  nhd_size[[i]] <- gLength(nhd_aea[[i]], byid = TRUE)
 	}
   }
   
