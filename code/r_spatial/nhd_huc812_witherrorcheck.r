@@ -53,7 +53,7 @@ aea_crs <- '+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0
 for (i in 1:length(huc)) {
   nhd_aea[[i]] <- try(spTransform(nhd_huc_intersect[[i]], CRSobj = aea_crs),  TRUE)
   
-  if (inherits(nhd_aea[[i]], 'try-error') {
+  if (inherits(nhd_aea[[i]], 'try-error')) {
 	nhd_size[[i]] <- NA
   } else {
 	# Calculate length or area
