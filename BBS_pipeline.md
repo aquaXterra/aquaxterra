@@ -41,14 +41,14 @@ This part also includes some wrangling that's needed for beta and gamma diversit
 	- Output: One CSV file for all birds, one for residents only. `bbs_alpha_11years.csv` and `bbs_alpha_11years_residents.csv`.
 	
 - `GitHub/aquaxterra/code/bbs/td_by_fg.r`
-	- Input:
+	- Input: `bbsworkspace_singleyear.r`, `birdtraitmerged.csv`
 	- Output: richness by functional group, for both all birds and for residents only `bbs_fgrichness_11years.csv`
 
-## Process output of diversity calculations
+## Process output of diversity calculations and summarize by HUC
 
-- Will need to write a new script for this to put everything into a single csv.
-
-## Summarize diversity values by HUC
+- `clean_bbs_pipeline/bbsalpha_compile.r`
+	- Input: 3 csvs produced in previous step, and `BBS_SpatialJoin.csv` file produced by Ed.
+	- Output: 6 csvs, one for mean and median BBS diversity in each of the three HUC levels.
 
 ## Draw maps and make plots
 
