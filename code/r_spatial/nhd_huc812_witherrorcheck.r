@@ -89,7 +89,8 @@ nhd_huc_summary <- lapply(nhd_huc_data, function(x) {
   x %>%
     filter(include == 'yes') %>%
     group_by(category, subcategory, permanence) %>%
-    summarize(size = sum(size))
+    summarize(size = sum(size)) %>%
+	as.data.frame
 })
 
 hucid <- as.character(huc@data$HUC)
