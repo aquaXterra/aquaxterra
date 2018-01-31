@@ -3,15 +3,8 @@
 # QDR, 07 Mar 2017
 # Project: NASABioXGeo
 
-# Modification 22 Sep 2017: (1) phylo distance matrix based on a single consensus tree of 1000 samples, (2) make single presence-absence for entire time period 2007-2016.
-# Updated on 31 May 2017: new 2016 routes+coordinates.
-# Modification 05 May 2017: New coordinates (correct)
-# Rereforked on 18 April 2017: Do by route.
-# Modification 11 April 2017: taking way too long so create an array job by radius.
-# Reforked on 10 April 2017: Only preparatory work. Save "chunks" to send small pieces to HPCC.
-# Forked on 06 April 2017: do taxonomic diversity only, which makes it quicker. We can just do 1 task per radius now.
-# Modification 08 Mar 2017: Make doubly parallel by giving a different radius to each task
-# but then also splitting the loop into 10 chunks since it will take forever to run otherwise.
+# Forked version created in aqua repo on 31 Jan 2018: Pool the same years (2001-2011) as are used for everything else. Also get rid of by stop stuff because it is so big.
+# Delete everything else that is unnecessary.
 
 # 1. Define community either as aggregated route or by stop
 
@@ -97,7 +90,6 @@ rs <- rowSums(fixedbbsmat_byroute)
 nocturnalbirds <- birdtrait$Latin_Name[birdtrait$Nocturnal == 1]
 fixedbbsmat_byroute <- fixedbbsmat_byroute[has_coords & rs != 0, !(dimnames(fixedbbsmat_byroute)[[2]] %in% nocturnalbirds) & ns != 0]
 
-#bbsalbers <- bbsalbers[has_coords & rs != 0, ]
 bbsgrps_byroute <- bbsgrps_byroute[has_coords & rs != 0, ]
 
 # 6. For the given radius, get pairwise distances among stops and the list of all neighbors.
@@ -125,19 +117,8 @@ getNeighbors <- function(dat, radius) {
 names(bbsgrps_byroute) <- c('year','rteNo','lon','lat','lon_aea','lat_aea')
 bbscov <- bbsgrps_byroute
 
-# For optimization purposes, convert covariates to a matrix.
-bbscovmat <- as.matrix(bbscov)
-
-
-bbsnhb_list <- as.data.frame(bbscovmat) %>% group_by(year) %>% do(l = getNeighbors(., radius = 5e5)) 
-# Flatten this into one list
-bbsnhb_r <- do.call('c', bbsnhb_list$l)
-
-save(bbsnhb_r, bbscov, bbscovmat, fixedbbsmat_byroute, file = '/mnt/research/nasabio/data/bbs/bbsworkspace_byroute.r')
-write.csv(fixedbbsmat_byroute, file = '/mnt/research/nasabio/data/bbs/bbs_plot_matrix.csv', row.names = FALSE)
-
 ######
-# Combine 2007-2016 into a single year.
+# Combine 2001-2011 into a single year.
 
 consolidate_years <- function(x) {
 	mat_x <- fixedbbsmat_byroute[x$rowidx, , drop = FALSE]
@@ -146,7 +127,7 @@ consolidate_years <- function(x) {
 
 bbs_consol <- bbscov %>%
 	mutate(rowidx = 1:nrow(bbscov)) %>%
-	filter(year >= 2007) %>%
+	filter(year >= 2001 & year <= 2011) %>%
 	group_by(rteNo, lon, lat, lon_aea, lat_aea) %>%
 	do(x = consolidate_years(.))
 	
@@ -158,4 +139,10 @@ bbscovmat_oneyear <- as.matrix(bbscov_oneyear)
 
 bbsnhb_list_oneyear <- getNeighbors(dat = as.data.frame(bbscovmat_oneyear), radius = 5e5)
 
-save(bbsnhb_list_oneyear, bbscov_oneyear, bbscovmat_oneyear, bbsmat_byroute_oneyear, file = '/mnt/research/nasabio/data/bbs/bbsworkspace_singleyear.r')
+# Include another matrix in the workspace with all the migratory birds removed.
+migrantbirds <- birdtrait$Latin_Name[birdtrait$migrant_status == TRUE]
+bbsmat_byroute_oneyear_residents <- bbsmat_byroute_oneyear[, !dimnames(bbsmat_byroute_oneyear)[[2]] %in% migrantbirds]
+
+save(bbsnhb_list_oneyear, bbscov_oneyear, bbscovmat_oneyear, bbsmat_byroute_oneyear, bbsmat_byroute_oneyear_residents, file = '/mnt/research/aquaxterra/DATA/raw_data/BBS/bbsworkspace_singleyear.r')
+
+

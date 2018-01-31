@@ -2,7 +2,10 @@
 
 AquaXTerra and NASABioXGeo projects
 
-QDR 31 Jan 2018
+As of 31 Jan 2018, all scripts needed to run this pipeline are located at `GitHub/aquaxterra/code/clean_bbs_pipeline` but many of the scripts have older hard-coded paths in them. Also, older locations are referenced below.
+
+Created: QDR 31 Jan 2018
+Last modified:
 
 ## Create matrix by year and route from raw data downloaded from USGS
 
@@ -25,26 +28,25 @@ QDR 31 Jan 2018
 
 ## Prepare matrix for diversity calculations
 
-This part also includes some wrangling that's needed for beta and gamma diversity at different radii, which is used for NASA stuff but not Aqua stuff. It pools years 2007-2016 into a single value but we probably want to do 2001-2011 instead. **TO DO**: See which years we want to do.
+This part also includes some wrangling that's needed for beta and gamma diversity at different radii, which is used for NASA stuff but not Aqua stuff. It pools years 2007-2016 into a single value but we probably want to do 2001-2011 instead. 
 
 - `GitHub/nasabio/prep_diversity_files/bbsbeta_byroute_prep.r`
 	- Input: `ericson_cons.tre` (Ericson consensus tree), `birdtraitmerged.csv`, `bbsmatconsolidated2016.r`
-	- Output: the pooled matrix as well as the phylogenetic distance matrix and functional distance matrix
+	- Output: the pooled matrix and covariate table `bbsworkspace_singleyear.r` as well as the phylogenetic distance matrix and functional distance matrix `bbspdfddist.r` (as of 31 Jan it is pooled for 2001-2011 and also has a separate matrix for all birds and for residents only!)
 
 ## Do diversity calculations
 
 - `GitHub/nasabio/run_compile_diversity/bbs1year/bbs_allplotsalpha.r`
-	- Input:
-	- Output: a lot of R objects
-	- **TO DO**: Do this with and without migratory species. (i.e., all species and residents-only)
+	- Input: `bbsworkspace_singleyear.r`, `bbspdfddist.r`, sources the function `pairwise_beta_focal.r`.
+	- Output: One CSV file for all birds, one for residents only. `bbs_alpha_11years.csv` and `bbs_alpha_11years_residents.csv`.
+	
 - `GitHub/aquaxterra/code/bbs/td_by_fg.r`
 	- Input:
-	- Output: richness by functional group
-	- **TO DO**: Do this again with the new BBS data? Definitely do this pooled by year.
+	- Output: richness by functional group, for both all birds and for residents only `bbs_fgrichness_11years.csv`
 
 ## Process output of diversity calculations
 
-- Will need to write a new script for this.
+- Will need to write a new script for this to put everything into a single csv.
 
 ## Summarize diversity values by HUC
 
