@@ -2,6 +2,8 @@
 # Use to make a single phylogenetic tree for calculating BBS phylogenetic diversity.
 # QDR - NASA project - 12 Sep 2017
 
+# Edit 31 Jan: add a better rooting place to keep chickens and ducks as outgroup
+
 # Load Brian O'Meara's code for getting branch lengths for a consensus tree
 source('~/GitHub/nasabio/data_extraction/consensusbranchlength.r')
 
@@ -19,6 +21,6 @@ eric_cons_brlen <- consensusBrlen(focalTree = eric_cons, sourceTreeList = erictr
 library(phytools)
 
 eric_cons_edges <- consensus.edges(trees = erictree, method = 'least.squares')
-eric_cons_edges <- reroot(eric_cons_edges, node.number = 1, position = 10)
+eric_cons_edges <- reroot(eric_cons_edges, node.number = 1226, position = 0)
 save(eric_cons_edges, file = 'C:/Users/Q/Dropbox/projects/nasabiodiv/ericson_cons_tree.r')
 write.tree(eric_cons_edges, file = 'C:/Users/Q/Dropbox/projects/nasabiodiv/ericson_cons.tre')

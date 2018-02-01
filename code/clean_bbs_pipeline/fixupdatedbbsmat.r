@@ -65,6 +65,7 @@ setTxtProgressBar(pb,j)
 x <- bbsmat_byroute[j,]
 
 # Reassign species randomly (must be done every time)
+set.seed(688)
 AOU_final <- bbsspp$AOU
 for (i in 1:length(AOU_lists)) {
   if (length(AOU_lists[[i]]) > 0) AOU_final[i] <- resample(AOU_lists[[i]], 1)

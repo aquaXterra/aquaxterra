@@ -19,9 +19,9 @@ Last modified:
 
 ## Gather functional trait info needed for FD and PD calculations
 
-- `GitHub/nasabio/trait_phylo_data_processing/bbs_consensustree.r` (Sources a function written by Brian O'Meara called `consensusbranchlength.r`)
-	- Input: Tree downloaded from birdtree.org
-	- Output: 
+- `GitHub/nasabio/trait_phylo_data_processing/bbs_consensustree.r` 
+	- Input: `ericson1000.tre` (list of 1000 trees downloaded from birdtree.org)
+	- Output: `ericson_cons.tre` (single consensus tree)
 - `GitHub/aquaxterra/code/bbs/readbirdtraits.r`
 	- Input: EltonTraits, Amniote Life History database traits, USFWS list of migratory status for all bird species
 	- Output: `birdtraitmerged.csv`
