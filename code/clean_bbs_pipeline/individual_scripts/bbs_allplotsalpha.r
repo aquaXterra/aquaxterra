@@ -1,4 +1,4 @@
-# Calculate gamma diversity within different radii for BBS.
+# Calculate alpha diversity within different radii for BBS.
 # in contrast to FIA, we can only use groups within the same year. 1997-present.
 
 # Do as a single group because it goes pretty quickly.
