@@ -5,8 +5,8 @@ qsub nhdhuc.sh -N river12 -v watertype=river,huclevel=huc12 -l mem=4gb -t 1-223
 
 qsub nhdhuc.sh -N lake8 -v watertype=lake,huclevel=huc8 -l mem=40gb,walltime=2:00:00:00 -t 182
 qsub nhdhuc.sh -N river8 -v watertype=river,huclevel=huc8 -l mem=40gb,walltime=7:00:00:00 -t 62,190
-qsub nhdhuc.sh -N lake12 -v watertype=lake,huclevel=huc12 -l mem=40gb,walltime=7:00:00:00 -t 43
-qsub nhdhuc.sh -N river12 -v watertype=river,huclevel=huc12 -l mem=40gb,walltime=7:00:00:00 -t 17,22,32,33,43,50,62,64,65,80,93,98,106,107,112,113,137,153,166,178,180,181,182,184,185,186,187,189,190,191,193,194,201
+qsub nhdhuc.sh -N lake12 -v watertype=lake,huclevel=huc12 -l mem=32gb,walltime=7:00:00:00 -t 43
+qsub nhdhuc.sh -N river12 -v watertype=river,huclevel=huc12 -l mem=32gb,walltime=7:00:00:00 -t 17,22,32,33,43,50,62,64,65,80,93,98,106,107,112,113,137,153,166,178,180,181,182,184,185,186,187,189,190,191,193,194,201
 
 # R code to see if jobs are done
 
