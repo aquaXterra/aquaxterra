@@ -17,28 +17,41 @@ library(rgeos)
 inverts <- read.csv('/mnt/research/aquaxterra/DATA/Insects/insects2001v3.csv', stringsAsFactors = FALSE)
 
 # Get rid of some of the rows that aren't too important
-inverts <- inverts %>% select(HUCEightDigitCode, LatitudeMeasure, LongitudeMeasure, class, order, family, genus, species)
+inverts <- inverts %>% select(HUCEightDigitCode, LatitudeMeasure, LongitudeMeasure, MonitoringLocationIdentifier, class, order, family, genus, species)
 
 inverts$HUC4 <- as.numeric(substr(inverts$HUCEightDigitCode, 1, 4))
 inverts$HUC4[nchar(inverts$HUCEightDigitCode) == 7] <- as.numeric(substr(inverts$HUC4[nchar(inverts$HUCEightDigitCode) == 7], 1, 3))
 inverts$HUC4[is.na(inverts$HUCEightDigitCode)] <- NA
 
-#need to drop NAs from consideration for calculating family richness
+#look at family richness values by HUC- need to drop NAs from consideration for calculating family 
 
 insect_table <- inverts %>%
   filter(family != "NA") %>%
-  group_by(HUC4, order) %>%
+  group_by(HUC4) %>%
   summarize(richness = length(unique(family)),
-            nrecords = n())
+            nrecords = length(unique(MonitoringLocationIdentifier)))
 
-#filter to records with over 1000 occurrences
+#merge HUC area with invert data
+HUC4_area<-read.csv('/mnt/research/aquaxterra/DATA/Insects/huc4area.csv')
+insect_table2<-left_join(insect_table, HUC4_area, by="HUC4")
 
-insect_allrec <- insect_table %>% group_by(HUC4) %>% summarize(allr = sum(nrecords)) %>% filter(allr >= 1000)
-insect_table <- filter(insect_table, HUC4 %in% insect_allrec$HUC4)
+#randomly resample records in proportion to HUC area
+insect_table3<-insect_table2%>%
+  mutate(area_prop=AreaSqKm/max(AreaSqKm, na.rm=TRUE)) #make new variable for proportional area- proportion of maximum HUC4 area
+inverts2<-full_join(inverts, insect_table3, by="HUC4")
+
+#resample from HUCs with 20 or more sampling locations, weight by inverse of area_prop
+inverts3<-subset(inverts2, nrecords>=10 & area_prop !="NA")
+
+insect_table4<-inverts3 %>%
+  do(sample_n(.,size=nrow(inverts3)*3/4, weight=1/(inverts3$area_prop), replace=FALSE))%>%
+  group_by(HUC4, order)%>%
+  summarize(richness = length(unique(family)),
+            nrecords = length(unique(MonitoringLocationIdentifier)))
 
 #reshape, Order rows -> columns
 library(reshape2)
-insect_cast <- dcast(insect_table, HUC4 ~ order, value.var = 'richness')
+insect_cast <- dcast(insect_table4, HUC4 ~ order, value.var = 'richness')
 insect_cast <- insect_cast[, !names(insect_cast) %in% 'NA']
 insect_cast[is.na(insect_cast)] <- 0 #assigns zero value to all NAs
 names(insect_cast)[-1] <- paste('richness', names(insect_cast)[-1], sep = '_') #rename columns
@@ -82,7 +95,7 @@ the_map <- ggplot(huc4_fort) +
   coord_equal() +
   theme_bw() + 
   theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(), panel.grid = element_blank(), panel.background = element_rect(color = 'black', fill = 'black'), panel.border = element_blank(), plot.background = element_rect(fill = 'black'), legend.position = c(0.13,0.1), legend.direction = 'horizontal', legend.title = element_blank(), legend.text = element_text(color = 'white'), legend.background = element_rect(fill = 'black'))
-ggsave(filename = "HUC4_Insect_family_richness.png", plot = the_map, height = 6, width = 9, dpi = 400)
+ggsave(filename = "HUC4_Resampled10_Insect_family_richness.png", plot = the_map, height = 6, width = 9, dpi = 400)
 
 
 
