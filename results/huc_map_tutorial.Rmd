@@ -1,0 +1,173 @@
+---
+title: "Joining HUC data with HUC boundaries"
+author: "Quentin D. Read"
+date: "June 1, 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+### EDIT THIS FILE PATH!!! ############################################################################
+knitr::opts_knit$set(root.dir = 'C:/Users/Q/google_drive/aquaxterra_watercube_all/DataPaper/tutorial/')
+#######################################################################################################
+```
+
+# Introduction
+
+This document demonstrates how you can join a table of data summarized by USGS hydrologic unit (HUC) with an object representing the spatial boundaries of the HUCs, using R. Next, it walks you through making a basic map of the data. We summarized variables at three HUC levels: HUC4 (coarsest, with about 200 in the continental USA), HUC8 (~2100), and HUC12 (~86000). Because there are so many different variables, and putting everything into three tables would be unwieldy, we separated the variables into different categories and split each of the three HUC-level variable summaries into multiple tables by those categories.
+
+**NOTE**: This assumes that you have downloaded all the data tables (CSVs) and shapefiles and that they are in the working directory out of which you are executing the R code.
+
+In the following examples, we use the breeding bird survey data summarized at the HUC4 level, but the process would be the same if you are using another category of data or another HUC level. Just change the file paths to the appropriate file.
+
+# R packages needed
+
+If you don't have the required R packages installed locally, you will not be able to run this code. If any of these packages aren't installed, do so by calling `install.packages('packagename')`. The install only needs to be done once.
+
+```{r, message = FALSE}
+library(sp)
+library(rgdal)
+library(ggplot2)
+library(dplyr)
+library(maps)
+library(maptools)
+library(rgeos)
+library(RColorBrewer)
+```
+
+
+# Loading data
+
+The data summarized by HUC are stored in CSV files (comma-separated tables). The spatial boundaries of the HUCs are stored in shapefiles, which consist of several files with the same name but different extensions. Loading the CSVs is easy to do with the base R function `read.csv()`. Here we load the breeding bird survey data summarized at the HUC4 level.
+
+```{r}
+bbs_huc4 <- read.csv('bbs_div_huc4.csv')
+```
+
+Loading the shapefile requires the `readOGR()` function from the `rgdal` package. We specify the data source name or `dsn` as the current working directory, and `layer` as the name of the shape file without any extensions. Here we load the HUC4 polygon boundaries. You will see an output message confirming the number of polygons in the shapefile. The class of the resulting object is `SpatialPolygonsDataFrame`.
+
+```{r}
+poly_huc4 <- readOGR(dsn = '.', layer = 'HU4_CONUS_Alb')
+```
+
+# Joining the data to the shapefile
+
+`SpatialPolygonsDataFrame` objects have an attribute called `data` which is a data frame. Each row represents a polygon and each column is a variable. We can join our data frame to the `data` attribute of the `SpatialPolygonsDataFrame`, as long as there is an ID column in both tables that can be used to join them. This snippet uses functions from the R package `dplyr` for efficient joining.
+
+```{r}
+poly_huc4@data <- poly_huc4@data %>% 
+  mutate(HUC4 = as.numeric(as.character(HUC4)), id = rownames(poly_huc4@data)) %>% 
+  left_join(bbs_huc4)
+```
+
+# Drawing a map
+
+We might be interested in looking at the spatial pattern of average bird species richness across HUC4 watersheds. Here, we draw a map of the continental United States with HUC4 polygons colored by richness. To help with orientation, we also include borders of the US states over the watershed borders. Functions from the R package `ggplot2` are used here, which are slower and more memory-intensive than base R map-drawing functions, but produce more beautiful and more customizable maps.
+
+## Basic map
+
+Next, we use the `fortify()` function from `ggplot2` to convert the spatial object into a data frame that can be read by `ggplot2`. Here we only retain the column we are interested in plotting, to save memory.
+
+```{r fortify}
+huc4_fort <- fortify(poly_huc4, region = 'id') %>% 
+  left_join(poly_huc4@data[c('id', 'HUC4_mean_richness')], by = 'id')
+```
+
+Draw the map, saving the object so that we can modify it later.
+
+```{r firstmap}
+p <- ggplot(huc4_fort, aes(x = long, y = lat, group = group)) +
+  geom_polygon(aes(fill = HUC4_mean_richness)) +
+  geom_path(color = 'white', size = 0.25) +
+  coord_equal() +
+  theme_bw() 
+
+p
+```
+
+
+## Map with state boundaries
+
+First, we use the `maps` package to get state boundaries. The HUC4 polygons are in the Albers conic equal-area projection so we use the `spTransform()` function from the `rgdal` package to project the state boundaries into that projection as well. Here `aea_crs` is the projection specification for Albers, and `wgs_crs` is the specification for unprojected lat-long coordinates using the WGS84 ellipse.
+
+```{r statebounds}
+aea_crs <- paste('+proj=aea',
+                 '+lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96',
+                 '+x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs',
+                 'ellps=GRS80 +towgs84=0,0,0')
+wgs_crs <- '+proj=longlat +ellps=WGS84 +no_defs'
+
+states <- map_data('state')
+state_coords <- SpatialPoints(coords = with(states, data.frame(x = long, y = lat)),
+                              proj4string = CRS(wgs_crs))
+state_albers <- spTransform(state_coords, CRSobj = CRS(aea_crs))
+states$long <- state_albers@coords[,1]
+states$lat <- state_albers@coords[,2]
+
+```
+
+Draw the map with the state borders superimposed.
+
+```{r secondmap}
+p + 
+  geom_path(data = states, color = 'gray20')
+```
+
+
+## Clipping HUC4 polygons to the state boundaries
+
+Many of the HUC4 polygons extend outside the political borders of the United States. We can cut off the portions of the polygons outside the USA's boundaries. This makes a nicer-looking map. Here, we use several functions from the `rgeos` package.
+
+```{r clipusa, results = 'hide'}
+usabounds <- map('usa', fill = TRUE) %>%
+  map2SpatialPolygons(IDs = .$names, proj4string = CRS(wgs_crs)) %>%
+  spTransform(CRSobj = CRS(aea_crs)) %>%
+  gBuffer() %>%
+  gUnaryUnion()
+
+hucdat <- poly_huc4@data
+poly_huc4 <- gIntersection(poly_huc4, usabounds, 
+                           byid = TRUE, id = row.names(poly_huc4@data))
+poly_huc4 <- SpatialPolygonsDataFrame(poly_huc4, hucdat)
+```
+
+
+## Finishing touches
+
+Here, we set plotting options such as a color scheme, getting rid of unhelpful text, and changing the background color.
+
+```{r}
+fill_scale <- scale_fill_gradientn(colours = rev(brewer.pal(9, 'RdYlBu')))
+
+map_theme <- theme(axis.text = element_blank(), 
+                   axis.ticks = element_blank(), 
+                   axis.title = element_blank(), 
+                   panel.grid = element_blank(), 
+                   panel.background = element_rect(color = 'black', fill = 'black'), 
+                   panel.border = element_blank(), 
+                   plot.background = element_rect(fill = 'black'), 
+                   legend.position = c(0.13,0.1), 
+                   legend.direction = 'horizontal', 
+                   legend.title = element_blank(), 
+                   legend.text = element_text(color = 'white'),
+                   legend.background = element_rect(fill = 'black'),
+                   plot.title = element_text(color = 'white'))
+```
+
+Finally, draw the map! (Note: we have to recreate the plot object because we clipped the polygons to the state borders after we created the original plot object.)
+
+```{r lastmap}
+huc4_fort <- fortify(poly_huc4, region = 'id') %>% 
+  left_join(poly_huc4@data[c('id', 'HUC4_mean_richness')], by = 'id')
+ggplot(huc4_fort, aes(x = long, y = lat, group = group)) +
+  geom_polygon(aes(fill = HUC4_mean_richness)) +
+  geom_path(color = 'white', size = 0.25) +
+  geom_path(data = states, color = 'gray20') +
+  coord_equal() +
+  theme_bw() +
+  fill_scale +
+  map_theme + 
+  ggtitle('Breeding bird richness')
+```

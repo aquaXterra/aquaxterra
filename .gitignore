@@ -29,3 +29,6 @@ vignettes/*.pdf
 
 # Compiled stan code
 *.rda
+
+# Rendered PDFs in the results directory
+results/*.pdf
