@@ -118,9 +118,9 @@ p +
 
 ## Clipping HUC4 polygons to the state boundaries
 
-Many of the HUC4 polygons extend outside the political borders of the United States. We can cut off the portions of the polygons outside the USA's boundaries. This makes a nicer-looking map. Here, we use several functions from the `rgeos` package.
+Many of the HUC4 polygons extend outside the political borders of the United States. We can cut off the portions of the polygons outside the USA's boundaries. This makes a nicer-looking map. Here, we use several functions from the `rgeos` package. The `gBuffer()` and `gUnaryUnion()` functions together make a single polygon representing the borders of the continental United States (that step is only needed because a few coastal islands are included in the USA map). The `gIntersection()` function only retains parts of polygons in the first argument that are fully inside the polygon given in the second argument. After intersecting, which clips off the parts of the HUC4s outside the USA borders, the data associated with the polygons is lost from the result, so we have to add it back in in the last line of the code below.
 
-```{r clipusa, results = 'hide', fig.keep= 'none'}
+```{r clipusa, results = 'hide', fig.keep = 'none', message = FALSE, warning = FALSE}
 usabounds <- map('usa', fill = TRUE) %>%
   map2SpatialPolygons(IDs = .$names, proj4string = CRS(wgs_crs)) %>%
   spTransform(CRSobj = CRS(aea_crs)) %>%
