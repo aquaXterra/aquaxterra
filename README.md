@@ -25,7 +25,7 @@ This repo contains R code for analyses that I (QDR) did for the aquaXterra Water
 
 Most of the R scripts in this repo reference data located on MSU's server at `/mnt/research/aquaxterra`. Anyone who wants to run this code has to be a registered MSU user with access to the server. There are a few data files in the `data` directory on this repo, so that some code can be run locally, but this is only for a few limited uses.
 
-## Summary of data directory tree
+### Summary of data directory tree
 
 - **CODE**: This is code created to manipulate spatial data. 
 	- **python**: Python scripts. For some reason the most updated output data files are currently located at `CODE/python/RasterOverlay`.
