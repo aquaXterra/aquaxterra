@@ -1,13 +1,17 @@
 # Diversity maps by HUC, using quick and dirty averages of all routes that are even a teeny bit in the huc.
 # NOTE: The diversity values here are NOT safe for use in analyses. They are really only for mapping purposes!
 
-library(dplyr)
-library(ggplot2)
-library(reshape2)
-library(GGally)
-library(maptools)
-library(rgdal)
-
+for (package in c(#"date", 
+  "ggplot2", "dplyr", "reshape2", "GGally", "maptools",
+  "rgdal")) {
+  if (!require(package, character.only=T, quietly=T)) {
+    install.packages(package)
+    library(package, character.only=T)
+  }
+}
+# From mounted directory on desktop
+#load('/Volumes/aquaxterra/DATA/raw_data/BBS/bbs_div_byroute_presence_allhucs.r')
+# on HPCC
 load('/mnt/research/aquaxterra/DATA/raw_data/BBS/bbs_div_byroute_presence_allhucs.r')
 
 # Calculate summaries by huc and year, averaging together the route numbers which is conveniently pre-weighted by stop numbers.
@@ -39,7 +43,9 @@ bbs_div_huc12 <- bbs_div_allhucs %>%
   summarize_all(.funs = mean, na.rm = TRUE)
 
 ### HUC4 maps ###
-
+# From mounted directory on desktop
+#huc4 <- readOGR(dsn = '/Volumes/aquaxterra/DATA/reprojected_data/HUC', layer = 'HU4_CONUS_Alb')
+# on HPCC
 huc4 <- readOGR(dsn = '/mnt/research/aquaxterra/DATA/reprojected_data/HUC', layer = 'HU4_CONUS_Alb')
 
 huc4@data <- huc4@data %>% mutate(id = rownames(huc4@data), HUC4 = as.numeric(as.character(HUC4))) %>% left_join(bbs_div_huc4)
@@ -50,7 +56,7 @@ rbcolors <- rev(RColorBrewer::brewer.pal(9, 'RdYlBu'))
 vars_to_plot <- names(bbs_div_huc4)[-(1:2)]
 
 states <- read.csv('~/states_albers.csv', stringsAsFactors = FALSE)
-
+#states <- read.csv('/Volumes/aquaxterra/DATA/state_borders/states_albers.csv', stringsAsFactors = FALSE)
 for (i in vars_to_plot) {
   map_i <- ggplot(huc4_fort) +
     geom_polygon(aes_string(x='long', y='lat', group='group', fill=i)) +
@@ -59,8 +65,11 @@ for (i in vars_to_plot) {
     scale_fill_gradientn(colours = rbcolors) +
     coord_equal() +
     theme_bw() + 
-    theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(), panel.grid = element_blank(), panel.background = element_rect(color = 'black', fill = 'black'), panel.border = element_blank(), plot.background = element_rect(fill = 'black'), legend.position = c(0.13,0.1), legend.direction = 'horizontal', legend.title = element_blank())
-  ggsave(filename = paste0('/mnt/research/aquaxterra/FIGS/bbs_huc_maps_29nov/huc4_byroute_allbirds_', i, '_map.png'), plot = map_i, height = 6, width = 9, dpi = 400)
+    theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(), panel.grid = element_blank(), panel.background = element_rect(color = 'black', fill = 'black'), panel.border = element_blank(), plot.background = element_rect(fill = 'black'), legend.position = c(0.13,0.1), legend.direction = 'horizontal', legend.title = element_text(colour="white", size=16)) + labs(title="Number of Bird Species")
+# on HPCC
+#    ggsave(filename = paste0('/mnt/research/aquaxterra/FIGS/bbs_huc_maps_29nov/huc4_byroute_allbirds_', i, '_map.pdf'), plot = map_i, height = 6, width = 9, dpi = 600)
+# on mounted drive
+     ggsave(filename = paste0('/Volumes/GoogleDrive/My Drive/Research/NASA_Biodiversity/NASABiodiversityWG/Figures/bbs_diversity_maps/huc4_byroute_allbirds_', i, '_map.pdf'), plot = map_i, height = 6, width = 9, dpi = 300)
   print(i)
 }
 
