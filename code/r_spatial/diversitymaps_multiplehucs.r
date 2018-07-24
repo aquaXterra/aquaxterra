@@ -65,11 +65,11 @@ for (i in vars_to_plot) {
     scale_fill_gradientn(colours = rbcolors) +
     coord_equal() +
     theme_bw() + 
-    theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(), panel.grid = element_blank(), panel.background = element_rect(color = 'black', fill = 'black'), panel.border = element_blank(), plot.background = element_rect(fill = 'black'), legend.position = c(0.13,0.1), legend.direction = 'horizontal', legend.title = element_text(colour="white", size=16)) + labs(title="Number of Bird Species")
+    theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(), panel.grid = element_blank(), panel.background = element_rect(color = 'black', fill = 'black'), panel.border = element_blank(), plot.background = element_rect(fill = 'black'), legend.position = c(0.13,0.1), legend.direction = 'horizontal', legend.title = element_blank())
 # on HPCC
-#    ggsave(filename = paste0('/mnt/research/aquaxterra/FIGS/bbs_huc_maps_29nov/huc4_byroute_allbirds_', i, '_map.pdf'), plot = map_i, height = 6, width = 9, dpi = 600)
+    ggsave(filename = paste0('/mnt/research/aquaxterra/FIGS/bbs_huc_maps_29nov/huc4_byroute_allbirds_', i, '_map.pdf'), plot = map_i, height = 6, width = 9, dpi = 600)
 # on mounted drive
-     ggsave(filename = paste0('/Volumes/GoogleDrive/My Drive/Research/NASA_Biodiversity/NASABiodiversityWG/Figures/bbs_diversity_maps/huc4_byroute_allbirds_', i, '_map.pdf'), plot = map_i, height = 6, width = 9, dpi = 300)
+    #     ggsave(filename = paste0('/Volumes/GoogleDrive/My Drive/Research/NASA_Biodiversity/NASABiodiversityWG/Figures/bbs_diversity_maps/huc4_byroute_allbirds_', i, '_map.pdf'), plot = map_i, height = 6, width = 9, dpi = 300)
   print(i)
 }
 
