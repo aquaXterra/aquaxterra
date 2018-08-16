@@ -1,6 +1,7 @@
 # Readme: Lake area and stream length from USGS NHD
 
-QDR 15 Aug 2018
+QDR 15 Aug 2018  
+Last modified: 16 Aug 2018
 
 ## Location of data
 
@@ -29,12 +30,12 @@ At the end of the loop, we write one CSV for HUC4 lake areas and one CSV for HUC
 
 ### HUC8 and HUC12
 
-HUC8 and HUC12 are more complex because we have to load the HUC4 shapefile and then do an intersection so that we can clip only the segments of each line and polygon feature that are in the appropriate HUC. At one point, I checked to make sure there is no double counting of streams running along the boundaries of two HUCs, so that isn't a problem. The script used is `nhd_huc812_witherrorcheck.r`. The shell script is `nhdhuc.sh`. This shell script takes two arguments, `watertype` and `huclevel`. This means every HUC4 is done in parallel four times: once to sum the stream length by HUC8, once to sum the lake area by HUC8, once to sum the stream length by HUC12, and once to sum the lake area by HUC12. Each of these should produce a CSV. Most have been run already but a few have not yet been run. The workflow is as follows:
+HUC8 and HUC12 are more complex because we have to load the HUC4 shapefile and then do an intersection so that we can clip only the segments of each line and polygon feature that are in the appropriate HUC. At one point, I checked to make sure there is no double counting of streams running along the boundaries of two HUCs, so that isn't a problem. The script used is `nhd_huc812_multi.r`. The shell script is `nhdhuc.sh`. This shell script takes two arguments, `watertype` and `huclevel`. This means every HUC4 is done in parallel four times: once to sum the stream length by HUC8, once to sum the lake area by HUC8, once to sum the stream length by HUC12, and once to sum the lake area by HUC12. Each of these should produce a CSV. Most have been run already but a few have not yet been run. The workflow is as follows:
 
 - Submit four job arrays with 223 child tasks, one for each HUC4. The four job arrays are for HUC8 length, HUC8 area, HUC12 length, and HUC12 area.
 - In each of the child tasks, load the NHD shapefile for that HUC4 (either waterbody or flowline).
 - Load either the HUC8 boundary shapefile or the HUC12 boundary shapefile for that HUC4.
-- Loop through the boundary shapefile and call `gIntersection()` on each of the smaller HUCs and the waterbody/flowline shapefiles to get the subset in each smaller HUC.
+- Loop through the boundary shapefile and call `gIntersection()` on each of the smaller HUCs and the waterbody/flowline shapefiles to get the subset in each smaller HUC. Note that this loop is itself parallelized so a single job is split among 10 processors!
 - Do a second loop through the intersected shapefiles, first projecting to Albers equal area then calling either `gArea()` or `gLength()`.
 - Calculate the sum of lake area/stream length grouped by category, subcategory, and permanence
 - Do some wrangling to fix the IDs and join the lookup table and area/length results to the attribute table
