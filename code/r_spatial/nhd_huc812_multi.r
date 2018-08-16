@@ -40,7 +40,7 @@ if (huclevel == 'huc8') {
 
 library(foreach)
 library(doParallel)
-registerDoParallel(cores = 9)
+registerDoParallel(cores = 5)
 
 # Calculate intersections of all NHD polygons or lines with each HUC
 nhd_huc_intersect <- foreach (i = 1:length(huc)) %dopar% {
