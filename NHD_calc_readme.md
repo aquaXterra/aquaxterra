@@ -1,9 +1,9 @@
 # Readme: Lake area and stream length from USGS NHD
 
 QDR 15 Aug 2018  
-Last modified: 16 Aug 2018
+Last modified: 17 Aug 2018
 
-## Location of data
+## Location of input data
 
 The data were downloaded to `/mnt/research/aquaxterra/DATA/raw_data/NHD/usgs_nhd/`. In that directory, there is a subdirectory for each HUC4 with the naming format `NHD_H_xxxx_Shape` where `xxxx` is the 4 digit code. Each HUC4 has a shapefile called `NHDFlowline.shp` with stream line features and one called `NHDWaterbody.shp` with lake polygon features. Because of this, it is very easy to sum up the areas and lengths by HUC4 since they are already separated into different shape files, but more difficult to sum up HUC8 and HUC12 because you have to do an intersection each time and pull out only the lakes and streams that are inside of the HUC area. 
 
@@ -11,7 +11,13 @@ The data were downloaded to `/mnt/research/aquaxterra/DATA/raw_data/NHD/usgs_nhd
 
 The entire code pipeline is done in R with the `rgeos` package used so that `GEOS` can do the actual heavy lifting of calculating the intersections of HUC8 and HUC12, then the areas and lengths. This might not be computationally the fastest or least memory-intensive. Not all the HUCs were finished running when I stopped working on this project a few months ago, thinking that it would be superseded either by Lifeng's code or by Nicole's code. If neither of those work, we will have to use this one anyway.
 
-The code is on GitHub at `github/qdread/aquaxterra/code/r_spatial`. It has to be run remotely on the HPCC for two reasons: it takes a really long time, and all the NHD shapefiles are stored there already. So there is a directory on the HPCC where I copied the R scripts and shell scripts: `/mnt/research/aquaxterra/CODE/R/nhd`. All the output CSVs are written to the `csvs` subdirectory in that folder. Also in the folder on the HPCC are two lookup tables for the different waterbody and flowline codes used in the NHD to classify the lakes and streams: `nhd_waterbody_lookup.csv` and `nhd_flowline_lookup.csv`. We are using these so that we can split up the lake areas and stream lengths by category, subcategory, and permanence status.
+The code is on GitHub at `github/qdread/aquaxterra/code/r_spatial`. It has to be run remotely on the HPCC for two reasons: it takes a really long time, and all the NHD shapefiles are stored there already. So there is a directory on the HPCC where I copied the R scripts and shell scripts: `/mnt/research/aquaxterra/CODE/R/nhd`. 
+
+## Location of output files
+
+All the temporary output CSVs are written to the `csvs` subdirectory in the `/mnt/research/aquaxterra/CODE/R/nhd` folder. Also in the folder on the HPCC are two lookup tables for the different waterbody and flowline codes used in the NHD to classify the lakes and streams: `nhd_waterbody_lookup.csv` and `nhd_flowline_lookup.csv`. We are using these so that we can split up the lake areas and stream lengths by category, subcategory, and permanence status.
+
+The final CSVs are written to `/mnt/research/aquaxterra/DATA/reprojected_data/NHD`. As of 17 August, only final HUC4 files are there.
 
 ## Description of workflow
 
