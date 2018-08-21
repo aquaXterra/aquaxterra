@@ -1,9 +1,11 @@
 # Code to calculate length and area of streams and lakes in parallel for HUC8 and HUC12 for each HUC4.
 # Do separately for HUC8 river length, HUC8 lake area, HUC12 river length, HUC12 lake area
-# Edit 28 Jan: add error catching in case any watersheds have no intersections.
-# Edit 16 Feb: Do multicore processing for the hucs that would take many days to run without it.
+
+# Alternate version created 20 Aug 2018: optimized for speed by using gIntersects() which returns logical.
 
 slice <- as.numeric(Sys.getenv('PBS_ARRAYID'))
+max_n_seconds <- 3600
+n_cores <- 5
 
 # Boilerplate code to get the arguments passed in
 # args are huclevel either "huc8" or "huc12" and watertype either "river" or "lake"
@@ -50,14 +52,29 @@ huc <- subset(huc, !NAME %in% bigislands)
 
 library(foreach)
 library(doParallel)
-registerDoParallel(cores = 5)
+library(R.utils)
+registerDoParallel(cores = n_cores)
 
 # Calculate intersections of all NHD polygons or lines with each HUC
 # Edit 20 Aug: print message both when started and finished
+# Edit 20 Aug: split into 2 steps: 1 step to do a logical with gIntersects 
+# Edit 20 Aug: add a timeout catcher so that it will not hang for more than 1 hour on a single HUC. (set max_n_seconds above)
 nhd_huc_intersect <- foreach (i = 1:length(huc)) %dopar% {
-  print(paste(i, 'of', length(huc), 'intersections started'))
-  inter <- gIntersection(nhd, huc[i,], byid = TRUE, drop_lower_td = TRUE)
-  print(paste(i, 'of', length(huc), 'intersections finished'))
+  message(paste(i, 'of', length(huc), 'intersections started'))
+  inter <- SpatialPolygonsDataFrame(SpatialPolygons(list()), data=data.frame()) # Create empty SPDF which will not be filled in unless the operation completes before timeout.
+  # The code below will quit after a predefined amount of time.
+  tryCatch(
+	expr = {
+		withTimeout({
+		  inter_subset <- gIntersects(nhd, huc[i,], byid = TRUE)[1, ]
+		  if (sum(inter_subset) > 0) inter <- gIntersection(nhd[inter_subset,], huc[i,], byid = TRUE, drop_lower_td = TRUE)
+		  message(paste(i, 'of', length(huc), 'intersections finished'))
+		},
+		timeout = max_n_seconds)
+	},
+	TimeoutException = function(ex) message(paste(i, 'of', length(huc), 'intersections timed out!!!'))
+  )
+ 
   inter
 }
 
