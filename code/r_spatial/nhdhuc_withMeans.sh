@@ -16,4 +16,4 @@ Rscript nhd_huc812_optimized_withMeans.r $watertype $huclevel
 
 scontrol show job $SLURM_JOB_ID
 
-# When submitting this job, remember to add variables (e.g., --export='watertype=lake,huclevel=huc8')
+# When submitting this job, remember to add variables (e.g., --export=watertype=lake,huclevel=huc8)

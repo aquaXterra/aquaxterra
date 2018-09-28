@@ -1,0 +1,25 @@
+#!/bin/bash
+ 
+### define resources needed:
+### walltime - how long you expect the job to run
+#PBS -l walltime=04:00:00
+ 
+### nodes:ppn - how many nodes & cores per node (ppn) that you require
+#PBS -l nodes=1:ppn=1
+ 
+### combine error and output files
+#PBS -j oe
+
+### mem: amount of memory that the job will need
+#PBS -l mem=4gb
+ 
+### you can give your job a name for easier identification
+#PBS -N huc4_hydro_areas
+
+
+### change to the working directory where your code is located
+cd /mnt/research/aquaxterra/CODE/R/nhd/
+ 
+Rscript nhd_huc4.r				       				   ### call your executable
+
+qstat -f $PBS_JOBID 

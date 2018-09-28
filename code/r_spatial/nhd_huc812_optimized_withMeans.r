@@ -151,7 +151,7 @@ nhd_huc_summary <- cbind(HUC = rep(hucid, sapply(nhd_huc_summary, nrow)), do.cal
 nhd_huc_means <- cbind(HUC = rep(hucid, sapply(nhd_huc_summary_means, nrow)), do.call('rbind', nhd_huc_summary_means))
 
 #write.csv(nhd_huc_summary, file = paste0('/mnt/research/aquaxterra/CODE/R/nhd/csvs/', huc4id, '_', huclevel, '_', watertype, '.csv'), row.names = FALSE)
-write.csv(nhd_huc_summary_means, file = paste0('/mnt/research/aquaxterra/CODE/R/nhd/csvs/', huc4id, '_', huclevel, '_', watertype, 'means.csv'), row.names = FALSE)
+write.csv(nhd_huc_means, file = paste0('/mnt/research/aquaxterra/CODE/R/nhd/csvs/', huc4id, '_', huclevel, '_', watertype, 'means.csv'), row.names = FALSE)
 
 # stop cluster
 stopImplicitCluster()
