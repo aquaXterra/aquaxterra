@@ -1,0 +1,19 @@
+#!/bin/sh -login
+#SBATCH --time=6:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=40G
+#SBATCH --job-name=baseflow_huc
+#SBATCH --mail-type=FAIL
+#SBATCH --array=1-50
+
+module load R
+
+cd /mnt/research/aquaxterra/CODE/R/
+
+# Run script with external variables
+Rscript extract_raster_to_lagos.R $rastpath $rastname
+
+scontrol show job $SLURM_JOB_ID
+
+# When submitting this job, remember to add variables (e.g., --export=sceneid=/mnt/research...,rastname=baseflow)
