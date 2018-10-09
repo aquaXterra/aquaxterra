@@ -375,7 +375,7 @@ bbs_alpha <- bbs_alpha %>% left_join(bbs_alpha_res) %>% left_join(bbs_fgrich)
 
 # Read BBS+HUC spatial join and combine with BBS diversity data.
 
-bbs_huc <- read.csv('BBS_SpatialJoin_Final.csv', stringsAsFactors = FALSE)
+bbs_huc <- read.csv('/mnt/research/aquaxterra/DATA/HUCed_data/BBS/BBS_SpatialJoin_Final.csv', stringsAsFactors = FALSE, colClasses = c(HUC4 = 'character', HUC8 = 'character', HUC12 = 'character', lagoslakeid = 'character'))
 
 ns <- strsplit(bbs_huc$rtestopNo, '-')
 bbs_huc$rteNo <- sapply(ns, '[', 1)
@@ -387,6 +387,7 @@ bbs_alpha_allhucs <- bbs_huc %>%
 	left_join(select(bbs_alpha, -lon, -lat, -lon_aea, -lat_aea))
 
 # Get the median values for all the diversity metrics for each HUC.
+# Aggregation groups are HUC4, HUC8, HUC12, and lagoslakeid.
 # Also do means to compare. In each case, it's weighted by how many stops in the route are in the HUC.
 # Export them as CSVs.
 
@@ -420,6 +421,16 @@ bbs_div_huc12_mean <- bbs_alpha_allhucs %>%
   group_by(HUC12) %>%
   summarize_all(.funs = mean, na.rm = TRUE) 
 
+bbs_div_lagos <- bbs_alpha_allhucs %>%
+  select(-rtestopNo, -lon, -lat, -HUC4, -HUC8, -HUC12, -Stop, -rteNo) %>%
+  group_by(lagoslakeid) %>%
+  summarize_all(.funs = median, na.rm = TRUE) 
+
+bbs_div_lagos_mean <- bbs_alpha_allhucs %>%
+  select(-rtestopNo, -lon, -lat, -HUC4, -HUC8, -HUC12, -Stop, -rteNo) %>%
+  group_by(lagoslakeid) %>%
+  summarize_all(.funs = mean, na.rm = TRUE)   
+  
 fp <- '.'
 write.csv(bbs_div_huc4, file.path(fp, 'bbs_div_huc4_median.csv'), row.names = FALSE)
 write.csv(bbs_div_huc4_mean, file.path(fp, 'bbs_div_huc4_mean.csv'), row.names = FALSE)
@@ -427,3 +438,5 @@ write.csv(bbs_div_huc8, file.path(fp, 'bbs_div_huc8_median.csv'), row.names = FA
 write.csv(bbs_div_huc8_mean, file.path(fp, 'bbs_div_huc8_mean.csv'), row.names = FALSE)
 write.csv(bbs_div_huc12, file.path(fp, 'bbs_div_huc12_median.csv'), row.names = FALSE)
 write.csv(bbs_div_huc12_mean, file.path(fp, 'bbs_div_huc12_mean.csv'), row.names = FALSE)
+write.csv(bbs_div_lagos, file.path(fp, 'bbs_div_lagoslakeid_median.csv'), row.names = FALSE)
+write.csv(bbs_div_lagos_mean, file.path(fp, 'bbs_div_lagoslakeid_mean.csv'), row.names = FALSE)
