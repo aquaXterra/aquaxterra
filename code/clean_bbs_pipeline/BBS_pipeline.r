@@ -431,12 +431,30 @@ bbs_div_lagos_mean <- bbs_alpha_allhucs %>%
   group_by(lagoslakeid) %>%
   summarize_all(.funs = mean, na.rm = TRUE)   
   
+# Combine mean and median into single data frames for writing as CSVs.  
+bbs_div_huc4 <- bbs_div_huc4_mean %>%
+	setNames(c('HUC4', paste('HUC4_mean', names(.)[-1], sep = '_'))) %>%
+	left_join(bbs_div_huc4 %>%
+				setNames(c('HUC4', paste('HUC4_median', names(.)[-1], sep = '_'))))
+				
+bbs_div_huc8 <- bbs_div_huc8_mean %>%
+	setNames(c('HUC8', paste('HUC8_mean', names(.)[-1], sep = '_'))) %>%
+	left_join(bbs_div_huc8 %>%
+				setNames(c('HUC8', paste('HUC8_median', names(.)[-1], sep = '_'))))
+
+bbs_div_huc12 <- bbs_div_huc12_mean %>%
+	setNames(c('HUC12', paste('HUC12_mean', names(.)[-1], sep = '_'))) %>%
+	left_join(bbs_div_huc12 %>%
+				setNames(c('HUC12', paste('HUC12_median', names(.)[-1], sep = '_'))))
+
+bbs_div_lagos <- bbs_div_lagos_mean %>%
+	setNames(c('lagoslakeid', paste('lagoslakeid_mean', names(.)[-1], sep = '_'))) %>%
+	left_join(bbs_div_lagos %>%
+				setNames(c('lagoslakeid', paste('lagoslakeid_median', names(.)[-1], sep = '_'))))				
+
+  
 fp <- '.'
-write.csv(bbs_div_huc4, file.path(fp, 'bbs_div_huc4_median.csv'), row.names = FALSE)
-write.csv(bbs_div_huc4_mean, file.path(fp, 'bbs_div_huc4_mean.csv'), row.names = FALSE)
-write.csv(bbs_div_huc8, file.path(fp, 'bbs_div_huc8_median.csv'), row.names = FALSE)
-write.csv(bbs_div_huc8_mean, file.path(fp, 'bbs_div_huc8_mean.csv'), row.names = FALSE)
-write.csv(bbs_div_huc12, file.path(fp, 'bbs_div_huc12_median.csv'), row.names = FALSE)
-write.csv(bbs_div_huc12_mean, file.path(fp, 'bbs_div_huc12_mean.csv'), row.names = FALSE)
-write.csv(bbs_div_lagos, file.path(fp, 'bbs_div_lagoslakeid_median.csv'), row.names = FALSE)
-write.csv(bbs_div_lagos_mean, file.path(fp, 'bbs_div_lagoslakeid_mean.csv'), row.names = FALSE)
+write.csv(bbs_div_huc4, file.path(fp, 'bbs_div_huc4.csv'), row.names = FALSE)
+write.csv(bbs_div_huc8, file.path(fp, 'bbs_div_huc8.csv'), row.names = FALSE)
+write.csv(bbs_div_huc12, file.path(fp, 'bbs_div_huc12.csv'), row.names = FALSE)
+write.csv(bbs_div_lagos, file.path(fp, 'bbs_div_lagoslakeid.csv'), row.names = FALSE)
