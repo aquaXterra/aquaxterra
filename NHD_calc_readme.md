@@ -1,7 +1,7 @@
 # Readme: Lake area and stream length from USGS NHD
 
 QDR 15 Aug 2018  
-Last modified: ACS 28 Sep 2018
+Last modified: ACS 10 Oct 2018
 
 ## Location of input data
 
@@ -49,16 +49,3 @@ HUC8 and HUC12 are more complex because we have to load the HUC4 shapefile and t
 - Write the results to a single CSV for that particular HUC4 named `xxxx_HUCno_watertype.csv` where `xxxx` is the 4-digit code, `no` is either 8 or 12, and `watertype` is either `lake` or `river`.
 
 *added 21 August*: In the script `nhd_combinecsvs.r`, the results are combined into four total CSVs and written to `/mnt/research/aquaxterra/DATA/albers_projected_data/NHD`.
-
-## Additional Notes
-
-### Named lake area and river length summaries
-
-New files have been created as of Sep 28, 2018 that contain the mean, median, sd, and number of major (named) lakes and rivers within each HUC. The river and lake segments are joined by name and the total area or length is calculated. 
-
-These files are created using the same process described above. However, all code files to create these data are appended with XXX_withMeans. Data files are appended with 'means.' The full code file equivalents are listed below. 
-
-+ nhd_huc4.r --> nhd_huc4_withMeans.r
-+ nhdh4.sh (no changes)
-+ nhd_huc812_optimized.r --> nhd_huc812_optimized_withMeans.r
-+ nhdhuc.sh --> nhdhuc_withMeans.sh
