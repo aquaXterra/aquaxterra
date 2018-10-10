@@ -3,17 +3,16 @@
 
 # Alternate version created 20 Aug 2018: optimized for speed by using gIntersects() which returns logical.
 
-slice <- as.numeric(Sys.getenv('PBS_ARRAYID'))
+slice <- as.numeric(Sys.getenv('SLURM_ARRAY_TASK_ID'))
 max_n_seconds <- 3600
 n_cores <- 5
 
 # Boilerplate code to get the arguments passed in
 # args are huclevel either "huc8" or "huc12" and watertype either "river" or "lake"
-args=(commandArgs(TRUE))
+args <- (commandArgs(TRUE))
 
-for (i in 1:length(args)) {
-  eval(parse(text=args[[i]]))
-}
+watertype <- as.character(args[1])
+huclevel <- as.character(args[2])
 
 # Get correct directory
 fp <- '/mnt/research/aquaxterra/DATA/raw_data/NHD/usgs_nhd'
@@ -109,8 +108,9 @@ correct_ids <- function(x) {
 }
 
 nhd_huc_data <- lapply(nhd_size, function(x) {
-  if (is.na(x)) return(NA)
+  if (is.null(x)) return(NA)
   ids <- correct_ids(x)
+  nhd@data$FCODE <- as.numeric(as.character(nhd@data$FCODE)) # convert to numeric
   nhd@data[ids, ] %>%
     rename(FCode = FCODE) %>%
     left_join(lookup) %>%
@@ -118,7 +118,7 @@ nhd_huc_data <- lapply(nhd_size, function(x) {
 })
 
 nhd_huc_summary <- lapply(nhd_huc_data, function(x) {
-  if (is.na(x)) return(data.frame(category=NA, subcategory=NA, permanence=NA, size=NA))
+  if (is.null(x)) return(data.frame(category = NA, subcategory = NA, permanence = NA, size = NA))
   x %>%
     filter(include == 'yes') %>%
     group_by(category, subcategory, permanence) %>%

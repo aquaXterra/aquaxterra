@@ -43,3 +43,11 @@ for (huc in c('huc4', 'huc8', 'huc12')) {
   write.csv(new, paste('/mnt/research/aquaxterra/DATA/HUCed_data/raster/', toupper(huc), 'summarized_100818.csv', sep = ''))
   print(paste('finished adding data for', huc))
 }
+
+# then for lagos files (different format)
+files <- all_files[grep('lagos', all_files)]
+data <- data.table(combine_csvs(file_list = files, out_path = paste('/mnt/research/aquaxterra/DATA/processed_data/baseflow/lagos_summaries.csv', sep = '')))
+summary <- as.data.frame(fread(paste('/mnt/research/aquaxterra/DATA/HUCed_data/raster/lagoslakeisummarized.csv', sep = ''), header = TRUE))
+summary[, grep('lagoslakei', names(summary))] <- as.numeric(summary[, grep('lagoslakei', names(summary))])
+new <- data.table(summary) %>% left_join(data, by = 'lagoslakei')
+write.csv(new, paste('/mnt/research/aquaxterra/DATA/HUCed_data/raster/lagoslakeisummarized_100818.csv', sep = ''))

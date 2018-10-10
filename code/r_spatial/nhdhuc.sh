@@ -1,17 +1,17 @@
 #!/bin/sh -login
-#PBS -l walltime=4:00:00
-#PBS -l nodes=1:ppn=1
-#PBS -l mem=2gb
-#PBS -N nhd
-#PBS -j oe
-#PBS -m n
+#SBATCH --time=6:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=5
+#SBATCH --mem=40G
+#SBATCH --job-name=nhd_huc812
+#SBATCH --mail-type=FAIL
+#SBATCH --array=1-223
 
-module load R/3.2.0 GDAL GEOS
-cp /mnt/research/aquaxterra/CODE/R/nhd/nhd_huc812.r $TMPDIR/rcode.r
-cd $TMPDIR
-now="$(date +'%d%h%Y%H%M')"
+module load R
 
-# Cobble together the R command using the environmental variables supplied.
-cmd="R CMD BATCH --no-save --no-restore '--args watertype=\""$watertype"\" huclevel=\""$huclevel"\"' rcode.r /mnt/research/aquaxterra/CODE/R/nhd/routputfiles/"$watertype"_"$huclevel"_"$PBS_ARRAYID"_"$now".txt"
-eval $cmd
+# Run script with external variables
+Rscript nhd_huc812_optimized.r $watertype $huclevel
 
+scontrol show job $SLURM_JOB_ID
+
+# When submitting this job, remember to add variables (e.g., --export=watertype=lake,huclevel=huc8)
