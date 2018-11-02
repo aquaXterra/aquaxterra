@@ -3,6 +3,7 @@
 # Everything is in Albers equal area projection.
 # Requires R, GDAL, and GEOS modules.
 # ACS 28 Sep 2018
+# Last edited ACS 18 Oct 2018
 
 library(maptools)
 library(rgdal)
@@ -41,63 +42,63 @@ huc4_pts <- SpatialPointsDataFrame(huc4_pts, hucdat4_pts[which(row.names(hucdat4
 huc4@data <- huc4@data %>%
   mutate(HUC4 = as.numeric(as.character(HUC4)), id = rownames(huc4@data)) %>%
   left_join(bbs_div4[, 1:2], by = 'HUC4') %>%
-  left_join(rast4[, c(1, grep('^mean_npp\\_\\d+', names(rast4)))], by = 'HUC4')
+  left_join(rast4[, c(1, grep('^mean_fpar\\_\\d+', names(rast4)))], by = 'HUC4')
 huc4_pts@data <- huc4_pts@data %>%
   mutate(HUC4 = as.numeric(as.character(HUC4)), id = rownames(huc4_pts@data)) %>%
   left_join(bbs_div4[, 1:2], by = 'HUC4') %>%
-  left_join(rast4[, c(1, grep('^mean_npp\\_\\d+', names(rast4)))], by = 'HUC4')
+  left_join(rast4[, c(1, grep('^mean_fpar\\_\\d+', names(rast4)))], by = 'HUC4')
 
 # calculate trend if you are interested in a time series variable (e.g., gpp, npp)
 get_stats <- function(data, index) {
-  newdat <- gather(data[i, grep('^mean_npp\\_\\d+', names(data))], key = year, value = mean_npp)
-  newdat$year <- as.numeric(gsub('^mean_npp_', '', newdat$year))
-  newdat$mean_npp <- as.numeric(newdat$mean_npp)/1000
-  mean <- mean(newdat$mean_npp, na.rm = TRUE)
+  newdat <- gather(data[i, grep('^mean_fpar\\_\\d+', names(data))], key = year, value = mean_fpar)
+  newdat$year <- as.numeric(gsub('^mean_fpar_', '', newdat$year))
+  newdat$mean_fpar <- as.numeric(newdat$mean_fpar)/1000
+  mean <- mean(newdat$mean_fpar, na.rm = TRUE)
   # scale to get relative increase
-  newdat$mean_npp <- scale(newdat$mean_npp)
-  mod <- lm(newdat$mean_npp~newdat$year, data = newdat)
+  newdat$mean_fpar <- scale(newdat$mean_fpar)
+  mod <- lm(newdat$mean_fpar~newdat$year, data = newdat)
   slope <- summary(mod)$coefficients[[2]]
   sig <- summary(mod)$coefficients[[8]] <= 0.05
   return(c(slope, sig, mean))
 }
 
-huc4@data$npp_trend <- NA
-huc4@data$npp_trend_dir <- NA
-huc4@data$npp_mean <- NA
-huc4@data$npp_sig <- NA
+huc4@data$fpar_trend <- NA
+huc4@data$fpar_trend_dir <- NA
+huc4@data$fpar_mean <- NA
+huc4@data$fpar_sig <- NA
 for (i in 1:nrow(huc4@data)) {
   stats <- get_stats(data = huc4@data, i)
-  huc4@data$npp_trend[i] <- stats[1]
+  huc4@data$fpar_trend[i] <- stats[1]
   if(stats[1] > 0) {
-    huc4@data$npp_trend_dir[i] <- '\U2191'
+    huc4@data$fpar_trend_dir[i] <- '\U2191'
   } 
   if(stats[1] < 0) {
-    huc4@data$npp_trend_dir[i] <- '\U2193'
+    huc4@data$fpar_trend_dir[i] <- '\U2193'
   } 
   else{
-    huc4@data$npp_trend_dir[i] <- '\U0020'
+    huc4@data$fpar_trend_dir[i] <- '\U0020'
   }
-  huc4_pts@data$npp_sig[i] <- stats[2]
-  huc4@data$npp_mean[i] <- stats[3]
+  huc4_pts@data$fpar_sig[i] <- stats[2]
+  huc4@data$fpar_mean[i] <- stats[3]
 }
-huc4_pts@data$npp_trend <- NA
-huc4_pts@data$npp_trend_dir <- NA
-huc4_pts@data$npp_mean <- NA
-huc4_pts@data$npp_sig <- NA
+huc4_pts@data$fpar_trend <- NA
+huc4_pts@data$fpar_trend_dir <- NA
+huc4_pts@data$fpar_mean <- NA
+huc4_pts@data$fpar_sig <- NA
 for (i in 1:nrow(huc4_pts@data)) {
   stats <- get_stats(data = huc4_pts@data, i)
-  huc4_pts@data$npp_trend[i] <- stats[1]
+  huc4_pts@data$fpar_trend[i] <- stats[1]
   if(stats[1] > 0) {
-    huc4_pts@data$npp_trend_dir[i] <- '\U2191'
+    huc4_pts@data$fpar_trend_dir[i] <- '\U2191'
   } 
   if(stats[1] < 0) {
-    huc4_pts@data$npp_trend_dir[i] <- '\U2193'
+    huc4_pts@data$fpar_trend_dir[i] <- '\U2193'
   } 
   if(stats[1] == 0){
-    huc4_pts@data$npp_trend_dir[i] <- '\U0020'
+    huc4_pts@data$fpar_trend_dir[i] <- '\U0020'
   }
-  huc4_pts@data$npp_sig[i] <- stats[2]
-  huc4_pts@data$npp_mean[i] <- stats[3]
+  huc4_pts@data$fpar_sig[i] <- stats[2]
+  huc4_pts@data$fpar_mean[i] <- stats[3]
 }
 
 # Convert spatial data into a data frame usable by ggplot2
@@ -116,12 +117,12 @@ browntobluecolors <- colorRampPalette(c('tan', 'skyblue'))(9)
 
 # Draw the map (slow and uses quite a bit of memory)
 the_map <- ggplot(huc4_fort) +
-    geom_polygon(aes_string(x = 'long', y = 'lat', group = 'group', fill = 'npp_mean')) +
+    geom_polygon(aes_string(x = 'long', y = 'lat', group = 'group', fill = 'fpar_mean')) +
     geom_path(aes_string(x = 'long', y = 'lat', group = 'group'), color = 'white', size = 0.25) +
-    geom_text(data = huc4_pts_fort, aes(x = long, y = lat, label = sprintf(npp_trend_dir), size = abs(npp_trend), color = as.factor(npp_sig))) +
+    geom_text(data = huc4_pts_fort, aes(x = long, y = lat, label = sprintf(fpar_trend_dir), size = abs(fpar_trend), color = as.factor(fpar_sig))) +
     geom_path(data = states, aes(x = long, y = lat, group = group), color = 'gray20') +
-    scale_fill_gradientn(colors = rbcolors, name = 'Mean NPP') +
-    scale_size_continuous(name = 'NPP Change (stdev) / Year') +
+    scale_fill_gradientn(colors = rbcolors, name = 'Mean FPAR') +
+    scale_size_continuous(name = 'FPAR Change (stdev) / Year') +
     scale_color_manual(breaks = c('1', '0'), values = c('gray48', 'black'), labels = c('p <= 0.05', 'p > 0.05'), name = 'Significance') +
     coord_equal() +
     theme_bw() +
@@ -144,5 +145,5 @@ the_map <- ggplot(huc4_fort) +
           fill = guide_colourbar(title.position = 'top', title.hjust = 0.5, order = 1))
 
 
-ggsave(filename = file.path('/home/annie/Documents/MSU_postdoc/aquaXterra_localFiles/figs/', 'huc4_summary_npp_trend_map.png'), plot = the_map, height = 6, width = 9, dpi = 400)
+ggsave(filename = file.path('/home/annie/Documents/MSU_postdoc/aquaXterra_localFiles/figs/', 'huc4_summary_fpar_trend_map.png'), plot = the_map, height = 6, width = 9, dpi = 400)
 
